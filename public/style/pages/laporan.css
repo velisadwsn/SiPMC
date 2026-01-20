@@ -1,0 +1,81 @@
+/* ================= MAIN CONTENT ================= */
+.main {
+  flex: 1;
+  padding: 20px;
+  overflow-y: auto;
+  background: #e6efff;
+}
+
+/* ================= PAGE HEADER ================= */
+.page-header {
+
+  display: flex;
+  flex-direction: column; /* ini kuncinya */
+  align-items: flex-start;
+  gap: 15px; /* jarak judul ke filter */
+  margin-bottom: 30px;
+}
+
+
+.page-title {
+  background: #b7c4d8;
+  padding: 18px 35px;
+  font-size: 34px;
+  font-weight: bold;
+  border-radius: 10px;
+  color: #41546f;
+}
+
+.filter-area {
+  align-self: flex-end;
+  display: flex;
+  gap: 8px;
+}
+
+.filter-area select {
+  padding: 8px 12px;
+  border-radius: 6px;
+    font-size: 16px;
+}
+.search-box {
+  position: relative;
+}
+
+.search-box input {
+  padding: 12px 40px 12px 15px;
+  border-radius: 10px;
+  border: 1px solid #999;
+  font-size: 16px;
+}
+.laporan-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+}
+
+.laporan-table th,
+.laporan-table td {
+  border: 1px solid #ccc;
+  padding: 10px;
+  text-align: center;
+}
+
+.laporan-table th {
+  background: #4d5f7c;
+  color: white;
+}
+
+.btn {
+  padding: 8px 16px;
+  border-radius: 6px;
+  border: 1px solid #fff;
+  cursor: pointer;
+  color: #fff;
+  background: #0c2b57;
+
+}
+
+.btn.primary {
+  background: #0c2b57;
+  color: white;
+}

@@ -1,0 +1,39 @@
+  <main class="main">
+    <!-- HEADER HALAMAN -->
+    <div class="page-header">
+      <div class="page-title">Data PC</div>
+      <div class="page-actions">
+      <a href="/pc/tambah" class="btn btn-add">+ Tambah Data</a>
+      
+      <div class="filter-area">
+    <select>
+      <option>Januari 2024</option>
+      <option>Februari2024</option>
+      <option>Maret 2024</option>
+    </select>
+
+        <div class="search-box">
+          <input type="text" placeholder="Cari">
+    
+        </div>
+      </div>
+    </div>
+    </div>
+    <!-- LIST PC -->
+    <div class="pc-list">
+      <% for(let i = 0; i < 8; i++) { %>
+        <div class="pc-card">
+          <div class="pc-code">0307</div>
+
+          <div class="pc-info">
+            <strong>Optiplex SFF 7020</strong>
+            <span>7PD8P54</span>
+          </div>
+
+          <a href="/pc/detail" class="btn-detail">Detail</a>
+        </div>
+      <% } %>
+    </div>
+
+  </main>
+

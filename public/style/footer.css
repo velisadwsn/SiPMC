@@ -1,0 +1,9 @@
+/* ================= FOOTER ================= */
+.footer {
+  margin-top: 40px;
+  padding: 15px 20px;
+  text-align: center;
+  font-size: 14px;
+  color: #6b7280;
+  border-top: 1px solid rgba(0,0,0,0.1);
+}

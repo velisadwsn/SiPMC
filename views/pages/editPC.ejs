@@ -1,0 +1,85 @@
+
+  <main class="main">
+    <div class="page-header">
+        <div class="page-title">Edit Detail Perangkat</div>
+    </div>
+    <!-- ================= DETAIL PERANGKAT ================= -->
+    <div class="card">
+     
+
+      <form action="/app.js device.id %>" method="POST">
+        <div class="form-grid-2col">
+
+  <!-- ===== KOLOM KIRI ===== -->
+  <div class="col">
+    <div class="form-row">
+      <label>Model</label>
+      <input type="text" name="model" value="<%= device.model %>">
+    </div>
+
+    <div class="form-row">
+      <label>Serial Number</label>
+      <input type="text" name="serial" value="<%= device.serial %>">
+    </div>
+
+    <div class="form-row">
+      <label>Site</label>
+      <input type="text" name="site" value="<%= device.site %>">
+    </div>
+
+    <div class="form-row">
+      <label>Lokasi</label>
+      <input type="text" name="lokasi" value="<%= device.lokasi %>">
+    </div>
+  </div>
+
+  <!-- ===== KOLOM KANAN ===== -->
+  <div class="col">
+    <div class="form-row">
+      <label>Employee No</label>
+      <input type="text" name="employee_no" value="<%= device.employee_no %>">
+    </div>
+
+    <div class="form-row">
+      <label>Checked Out</label>
+      <input type="text" name="checked_out" value="<%= device.checked_out %>">
+    </div>
+
+    <div class="form-row">
+      <label>Hostname</label>
+      <input type="text" name="hostname_sp" value="<%= device.hostname_sp %>">
+    </div>
+  </div>
+
+</div>
+
+
+        <!-- ================= PMC ================= -->
+        <div class="card pmc-card">
+          <h3>Preventive Maintenance Check (PMC)</h3>
+
+          <div class="form-grid">
+            <div class="form-row">
+              <label>Jadwal PMC</label>
+              <input type="month" name="jadwal_pmc">
+            </div>
+
+            <div class="form-row">
+              <label>Status PMC</label>
+              <select name="pmc_status">
+                <option value="Done" <%= device.pmc_status === 'Done' ? 'selected' : '' %>>Done</option>
+                <option value="Pending" <%= device.pmc_status === 'Pending' ? 'selected' : '' %>>Pending</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- ================= ACTION ================= -->
+        <div class="actions">
+          <a href="/pc/detail" class="btn">Batal</a>
+          <button type="submit" class="btn primary">Simpan Perubahan</button>
+        </div>
+      </form>
+    </div>
+  </main>
+</div>

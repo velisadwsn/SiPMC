@@ -1,0 +1,31 @@
+
+<main class="main">
+     <div class="page-header">
+     <div class="page-title">Riwayat Perangkat</div>
+</div>
+
+  <div class="riwayat-wrapper">
+
+    <% riwayat.forEach(item => { %>
+      <!-- CARD -->
+      <a href="/pmc/detail/<%= item.id %>" class="riwayat-card">
+
+        <div class="left">
+          <h3><%= item.model %></h3>
+          <p>
+            <b><%= item.aksi %></b> oleh 
+            <span><%= item.oleh %></span>
+          </p>
+        </div>
+
+        <div class="right">
+          <span class="date"><%= item.tanggal %></span>
+        </div>
+
+      </a>
+    <% }) %>
+  
+  </div>
+</main>
+</div>
+

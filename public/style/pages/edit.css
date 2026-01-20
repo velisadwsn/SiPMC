@@ -1,0 +1,180 @@
+
+/* ================= MAIN CONTENT ================= */
+.main {
+  flex: 1;
+  padding: 20px;
+  overflow-y: auto;
+  background: #e6efff;
+}
+
+/* ================= PAGE HEADER ================= */
+.page-header {
+  display: flex;
+  flex-direction: column; /* ini kuncinya */
+  align-items: flex-start;
+  gap: 15px; /* jarak judul ke filter */
+  margin-bottom: 30px;
+}
+/* TITLE PC */
+.page-title {
+  background: #b7c4d8;
+  padding: 18px 35px;
+  font-size: 34px;
+  font-weight: bold;
+  border-radius: 10px;
+  color: #41546f;
+}
+
+
+/* ================= CARD ================= */
+.card {
+  background: #fff;
+  border-radius: 8px;
+  padding: 25px 30px;
+  margin-bottom: 25px;
+}
+
+/* ================= GRID ================= */
+/* GRID 2 KOLOM FIX */
+.form-grid-2col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px;
+}
+
+.col {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+
+/* ================= ROW ================= */
+.form-row {
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 10px;
+  font-size: 17px;
+}
+
+/* LABEL (KIRI) */
+.form-row label {
+  width: 150px;
+  font-weight: 700;
+  color: #000;
+  flex-shrink: 0;
+}
+
+/* INPUT / SELECT (KANAN) */
+.form-row input,
+.form-row select {
+  margin-left: 20px;
+  padding: 8px 12px;
+  font-size: 16px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  background: #fff;
+  width: 100%;
+  max-width: 280px;
+}
+
+/* FOCUS */
+.form-row input:focus,
+.form-row select:focus {
+  outline: none;
+  border-color: #1e88e5;
+}
+
+/* ================= PMC CARD ================= */
+.pmc-card {
+  margin-top: 30px;
+}
+
+.pmc-card h3 {
+  margin-bottom: 15px;
+}
+
+.pmc-card .form-grid {
+  border-top: 1px solid #eee;
+  border-bottom: 1px solid #eee;
+  padding: 15px 0;
+}
+
+/* ================= ACTION ================= */
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.actions .btn {
+  padding: 12px 22px;
+  font-size: 15px;
+  border-radius: 8px;
+  font-weight: 600;
+  border: 1px solid #ccc;
+  background: white;
+  cursor: pointer;
+}
+
+.btn.primary {
+  background: #1e88e5;
+  color: white;
+  border: none;
+}
+
+/* ================= RESPONSIVE ================= */
+@media (max-width: 900px) {
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .main {
+    padding: 25px;
+  }
+
+  .page-title {
+    font-size: 26px;
+  }
+}
+/* ================= GRID 2 KOLOM DETAIL ================= */
+.form-grid-2col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  column-gap: 50px;
+}
+
+.col {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+/* INPUT DALAM GRID (BIAR MIRIP DETAIL) */
+.pmc-row {
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid #eee;
+  padding: 12px 0;
+  font-size: 17px;
+}
+
+/* LABEL PMC */
+.pmc-row span {
+  width: 150px;          /* ⬅️ samain kayak label lain */
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+/* INPUT / SELECT PMC */
+.pmc-row input,
+.pmc-row select {
+  margin-left: 20px;     /* ⬅️ jarak aman */
+  padding: 8px 12px;
+  font-size: 16px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  max-width: 280px;
+  width: 100%;
+}

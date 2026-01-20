@@ -1,0 +1,70 @@
+
+.main {
+  flex: 1;
+  padding: 20px;
+  overflow-y: auto;
+  background: #e6efff;
+}
+/* ================= PAGE HEADER ================= */
+.page-header {
+  display: flex;
+  flex-direction: column; /* ini kuncinya */
+  align-items: flex-start;
+  gap: 15px; /* jarak judul ke filter */
+  margin-bottom: 30px;
+}
+
+.page-title {
+  background: #b7c4d8;
+  padding: 18px 35px;
+  font-size: 34px;
+  font-weight: bold;
+  border-radius: 10px;
+  color: #41546f;
+}
+.riwayat-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+/* CARD */
+.riwayat-card {
+  background: white;
+  border-radius: 10px;
+  padding: 20px 25px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  text-decoration: none;
+  color: black;
+  transition: 0.2s;
+  border-left: 6px solid #1e88e5;
+}
+
+.riwayat-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+/* LEFT */
+.riwayat-card h3 {
+  margin-bottom: 5px;
+  font-size: 20px;
+}
+
+.riwayat-card p {
+  font-size: 16px;
+  color: #444;
+}
+
+/* RIGHT */
+.date {
+  font-size: 14px;
+  color: #666;
+}
+
+/* BADGE WARNA */
+.riwayat-card:has(b:contains("Dihapus")) {
+  border-left-color: #e53935;
+}

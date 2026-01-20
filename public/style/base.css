@@ -1,0 +1,16 @@
+/* ================= RESET ================= */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Segoe UI", sans-serif;
+}
+
+/* ================= LOCK PAGE ================= */
+body {
+  background: #e6efff;
+  height: 100vh;
+  overflow: hidden; /* halaman TIDAK bisa ditarik */
+  margin: 0;
+}
+

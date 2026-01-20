@@ -1,0 +1,53 @@
+<link rel="stylesheet" href="/style/sidebar.css">
+<aside class="sidebar">
+  <a href="/user" class="profile">
+  <img src="<%= user.avatar %>" class="avatar">
+
+  <div>
+    <strong>Admin Satu</strong><br>
+    <small>ICT Unit</small>
+  </div>
+</a>
+
+
+  <ul class="menu">
+    <li class="<%= active === 'dashboard' ? 'active' : '' %>">
+      <a href="/dashboard">Dashboard</a>
+    </li>
+    
+    <li class="<%= active === 'laptop' ? 'active' : '' %>">
+      <a href="/laptop">Data Laptop</a>
+    </li>
+
+    <li class="<%= active === 'pc' ? 'active' : '' %>">
+      <a href="/pc">Data PC</a>
+    </li>
+
+    <li class="<%= active === 'riwayat' ? 'active' : '' %>">
+      <a href="/riwayat">Riwayat</a>
+    </li>
+
+     <!-- LAPORAN -->
+    <li class="has-submenu <%= active === 'laporan' ? 'open' : '' %>">
+
+      <!-- checkbox (hidden total) -->
+      <input type="checkbox" id="laporan-toggle"
+        <%= active === 'laporan' ? 'checked' : '' %>>
+
+      <label for="laporan-toggle" class="menu-title">
+        Laporan
+      </label>
+
+      <ul class="submenu">
+        <li class="<%= subActive === 'laptop' ? 'active' : '' %>">
+          <a href="/laporan/laptop">Laptop</a>
+        </li>
+        <li class="<%= subActive === 'pc' ? 'active' : '' %>">
+          <a href="/laporan/pc">PC</a>
+        </li>
+      </ul>
+
+    </li>
+
+  </ul>
+</aside>

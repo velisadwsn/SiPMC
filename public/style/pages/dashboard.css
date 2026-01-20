@@ -1,0 +1,74 @@
+
+/* ================= MAIN CONTENT ================= */
+.main {
+  flex: 1;
+  padding: 20px;
+  overflow-y: auto;
+  background: #e6efff;
+}
+/* ================= MAIN TITLE ================= */
+.main h1 {
+  font-size: 34px;
+  color: #4d5f7c;
+  margin: 0 0 40px 0;
+}
+
+/* ================= DASHBOARD CARDS ================= */
+.cards {
+  display: flex;
+  gap: 30px;
+  flex-wrap: wrap;
+}
+
+.card {
+  width: 260px;
+  padding: 30px;
+  border-radius: 20px;
+  box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+}
+
+.card h3 {
+  font-size: 26px;
+  margin-bottom: 20px;
+}
+
+.card h3 span {
+  float: right;
+}
+
+.card p {
+  font-size: 18px;
+  margin-bottom: 8px;
+}
+
+/* ================= CARD COLORS ================= */
+.card.dark {
+  background: #4d5f7c;
+  color: white;
+}
+
+.card.gray {
+  background: #a7a7b5;
+  color: #000;
+}
+
+.card.green {
+  background: #9ad1a3;
+  color: #0b4f1a;
+}
+
+@media (max-width: 900px) {
+  .sidebar {
+    width: 190px;
+    min-width: 190px;
+  }
+
+  .main {
+    padding: 25px;
+  }
+   .main h1 {
+    font-size: 26px;
+  }
+}
+
+

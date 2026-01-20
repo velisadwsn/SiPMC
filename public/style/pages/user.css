@@ -1,0 +1,97 @@
+.main {
+  flex: 1;
+  padding: 20px;
+  overflow-y: auto;
+  background: #e6efff;
+}
+.page-header {
+  display: flex;
+  flex-direction: column; /* ini kuncinya */
+  align-items: flex-start;
+  gap: 15px; /* jarak judul ke filter */
+  margin-bottom: 30px;
+}
+
+
+/* TITLE PC */
+.page-title {
+  background: #b7c4d8;
+  padding: 18px 35px;
+  font-size: 34px;
+  font-weight: bold;
+  border-radius: 10px;
+  color: #41546f;
+}
+
+
+.user-container {
+    margin-top: 20px;
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  gap: 40px;
+  align-items: flex-start;
+}
+
+/* AVATAR */
+.user-avatar {
+  background: #b7c4d8;
+  padding: 25px;
+  border-radius: 12px;
+  text-align: center;
+}
+
+.avatar-preview {
+  width: 160px;
+  height: 160px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-bottom: 15px;
+}
+
+.upload-btn {
+  display: inline-block;
+  padding: 8px 16px;
+  background: #0c2b57;
+  color: white;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+/* FORM */
+.user-form {
+  background: #ffffff;
+  padding: 30px;
+  border-radius: 12px;
+}
+
+.user-form h2 {
+  margin-bottom: 25px;
+}
+
+.form-group {
+  margin-bottom: 18px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 6px;
+  font-weight: 600;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 10px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+
+.form-group button {
+  display: inline-block;
+  padding: 8px 16px;
+  background: #0c2b57;
+  color: white;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+}
