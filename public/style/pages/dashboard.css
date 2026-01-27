@@ -1,74 +1,128 @@
-
-/* ================= MAIN CONTENT ================= */
+/* ================= MAIN LAYOUT ================= */
 .main {
   flex: 1;
-  padding: 20px;
+  padding: 30px;
   overflow-y: auto;
   background: #e6efff;
 }
-/* ================= MAIN TITLE ================= */
-.main h1 {
-  font-size: 34px;
-  color: #4d5f7c;
-  margin: 0 0 40px 0;
+
+/* ================= PAGE HEADER ================= */
+.page-header {
+  margin-bottom: 30px;
 }
 
-/* ================= DASHBOARD CARDS ================= */
-.cards {
+.page-title {
+  font-size: 28px;
+  font-weight: 800;
+  color: #2c3e50;
+  margin: 0;
+}
+
+.welcome-text {
+  font-size: 16px;
+  color: #7f8c8d;
+  margin-top: 5px;
+}
+
+/* ================= DASHBOARD GRID (New Layout) ================= */
+/* Menggantikan class .cards yang lama */
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); /* Responsif */
+  gap: 25px;
+  margin-top: 20px;
+}
+
+/* ================= STAT CARD DESIGN ================= */
+/* Menggantikan class .card yang lama */
+.stat-card {
+  border-radius: 16px;
+  padding: 25px;
+  height: 180px; /* Tinggi tetap biar rapi */
   display: flex;
-  gap: 30px;
-  flex-wrap: wrap;
+  flex-direction: column;
+  justify-content: space-between;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.1); /* Bayangan halus */
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  color: white; /* Default text putih */
 }
 
-.card {
-  width: 260px;
-  padding: 30px;
-  border-radius: 20px;
-  box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+.stat-card:hover {
+  transform: translateY(-5px); /* Efek naik saat di-hover */
+  box-shadow: 0 15px 30px rgba(0,0,0,0.15);
 }
 
-.card h3 {
-  font-size: 26px;
-  margin-bottom: 20px;
+/* Bagian Atas Kartu (Label & Angka) */
+.card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
 }
 
-.card h3 span {
-  float: right;
+.card-label {
+  font-size: 14px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  opacity: 0.9;
+  margin: 0;
 }
 
-.card p {
-  font-size: 18px;
-  margin-bottom: 8px;
+.card-number {
+  font-size: 48px;
+  font-weight: 800;
+  line-height: 1;
 }
 
-/* ================= CARD COLORS ================= */
-.card.dark {
-  background: #4d5f7c;
-  color: white;
+.card-icon {
+  font-size: 36px;
+  opacity: 0.8;
 }
 
-.card.gray {
-  background: #a7a7b5;
-  color: #000;
+/* Bagian Bawah Kartu (Rincian Laptop/PC) */
+.card-bottom {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 14px;
+  font-weight: 500;
+  padding-top: 15px;
+  border-top: 1px solid rgba(255,255,255,0.2); /* Garis pemisah transparan */
 }
 
-.card.green {
-  background: #9ad1a3;
-  color: #0b4f1a;
+.detail-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
-@media (max-width: 900px) {
-  .sidebar {
-    width: 190px;
-    min-width: 190px;
+/* ================= COLOR THEMES (Gradient) ================= */
+
+/* 1. TOTAL (Biru Gelap - Elegan) */
+.stat-card.dark-blue {
+  background: #4D5B7A;
+}
+
+/* 2. PENDING (Silver/Abu Keunguan - Modern) */
+.stat-card.grey {
+  background: #9899b5;
+  color: #fff; 
+}
+
+/* 3. DONE (Hijau Soft - Fresh) */
+.stat-card.soft-green {
+  background: #76d090;
+}
+
+/* ================= RESPONSIVE ================= */
+@media (max-width: 768px) {
+  .dashboard-grid {
+    grid-template-columns: 1fr; /* Jadi 1 kolom di HP */
   }
-
-  .main {
-    padding: 25px;
-  }
-   .main h1 {
-    font-size: 26px;
+  
+  .stat-card {
+    height: auto; /* Tinggi otomatis di HP */
   }
 }
-
-

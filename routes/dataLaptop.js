@@ -1,74 +1,207 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
+const db = require("../config/database");
 
-router.get('/', (req, res) => {
-  res.render('pages/dataLaptop', {
-    title: 'Data Laptop',
-    active: 'laptop',
-    layout: 'layouts/main',
-    css: 'dataDevice.css'
+// ==================================================
+// 1. HALAMAN UTAMA (LIST LAPTOP + STATUS TERAKHIR)
+// ==================================================
+router.get("/", (req, res) => {
+  const { bulan, keyword } = req.query;
+
+  let sql = `
+    SELECT d.*, 
+    COALESCE(
+        (SELECT status_PMC FROM histories h WHERE h.device_id = d.device_id ORDER BY h.riwayat_id DESC LIMIT 1),
+        'Pending'
+    ) as status_terakhir
+    FROM devices d 
+    WHERE d.device_type = 'Laptop'
+  `;
+  
+  let params = [];
+
+  if (bulan) { sql += " AND d.jadwal_PMC LIKE ?"; params.push(`%${bulan}%`); }
+  if (keyword) { sql += " AND (d.no LIKE ? OR d.model LIKE ? OR d.serial_number LIKE ?)"; params.push(`%${keyword}%`, `%${keyword}%`, `%${keyword}%`); }
+
+  db.query(sql, params, (err, results) => {
+    if (err) return res.status(500).send("DB Error");
+    res.render("pages/dataLaptop", {
+      title: "Data Laptop", layout: "layouts/main", css: "dataDevice.css",
+      active: "laptop", laptops: results, bulan: bulan || "", keyword: keyword || ""
+    });
   });
 });
 
-/* ================= DETAIL ================= */
-router.get('/detail', (req, res) => {
-  const pmc = {
-    id: 1,
-    model: 'Probook 440 G10',
-    employee_no: '3185',
-    serial: '5CD40339N2',
-    checked_out: 'ANDI PUTRA',
-    cocd: '2000',
-    hostname: '31852000NBS0024',
-    lokasi: 'Region Padang',
-    jadwal_pmc: 'Januari 2026',
-    status_pmc: 'Done'
-  };
+// ==================================================
+// 2. TAMBAH LAPTOP (CATAT HISTORY 'ADD')
+// ==================================================
+router.get('/tambah', (req, res) => {
+  res.render("pages/tambahLaptop", { title: "Tambah Laptop", layout: "layouts/main", css: "edit.css", active: "laptop" });
+});
 
-  res.render('pages/detailLaptop', {
-    title: 'Detail Perangkat',
-    active: 'laptop',
-    layout: 'layouts/main',
-    css: 'detail.css',
-    pmc
+router.post('/tambah', (req, res) => {
+  const { model, serial_number, cocd, lokasi, employee_no, checked_out, no, jadwal_PMC, status_pmc } = req.body;
+  // AMBIL ID TEKNISI DARI SESSION
+  const idTeknisi = req.session.user.id; 
+  
+  const sqlInsert = "INSERT INTO devices (device_type, model, serial_number, cocd, lokasi, employee_no, checked_out, no, jadwal_PMC) VALUES ('Laptop', ?, ?, ?, ?, ?, ?, ?, ?)";
+  const values = [model, serial_number, cocd, lokasi, employee_no, checked_out, no, jadwal_PMC];
+
+  db.query(sqlInsert, values, (err, result) => {
+    if (err) return res.status(500).send(err.message);
+    
+    const tahun = new Date().getFullYear();
+    const infoPerangkat = `${model} ${serial_number}`; 
+    
+    // MASUKKAN checked_by KE HISTORY
+    const sqlHist = `
+        INSERT INTO histories 
+        (device_id, tahun, status_PMC, tanggal_cek, action_type, info_backup, checked_by) 
+        VALUES (?, ?, ?, NOW(), 'Add', ?, ?)
+    `;
+    
+    db.query(sqlHist, [result.insertId, tahun, status_pmc, infoPerangkat, idTeknisi], (errHist) => {
+        if (errHist) console.error("Gagal simpan history tambah:", errHist);
+        res.redirect('/laptop');
+    });
   });
 });
 
+// ==================================================
+// 3. DETAIL LAPTOP (BACA STATUS DARI HISTORY)
+// ==================================================
+router.get('/detail/:id', (req, res) => {
+  const id = req.params.id;
 
-/* ================= EDIT ================= */
+  db.query("SELECT * FROM devices WHERE device_id = ?", [id], (err, results) => {
+    if (results.length === 0) return res.status(404).send("Not Found");
+    const data = results[0];
+
+    const sqlHist = "SELECT status_PMC FROM histories WHERE device_id = ? ORDER BY riwayat_id DESC LIMIT 1";
+
+    db.query(sqlHist, [id], (errHist, resultHist) => {
+        let lastStatus = 'Pending';
+        if (resultHist && resultHist.length > 0) {
+           lastStatus = resultHist[0].status_PMC;
+        }
+
+        const pmcData = {
+          id: data.device_id, model: data.model, employee_no: data.employee_no || '-',
+          serial: data.serial_number, checked_out: data.checked_out || '-',
+          cocd: data.cocd || '-', hostname: data.no, lokasi: data.lokasi || '-',
+          
+          // Kirim dua versi biar aman di EJS
+          jadwal_PMC: data.jadwal_PMC, 
+          jadwal_pmc: data.jadwal_PMC, 
+          
+          status_pmc: lastStatus
+        };
+
+        res.render("pages/detailLaptop", {
+          title: "Detail Perangkat", layout: "layouts/main", css: "detail.css",
+          active: "laptop", pmc: pmcData, histories: []
+        });
+    });
+  });
+});
+
+// ==================================================
+// 4. EDIT FORM
+// ==================================================
 router.get('/detail/edit/:id', (req, res) => {
-  const device = {
-    id: req.params.id,
-    model: 'Probook 440 G10',
-    serial: '5CD40339N2',
-    cocd: '2000',
-    lokasi: 'Region Padang',
-    employee_no: '3185',
-    checked_out: 'ANDI PUTRA',
-    hostname_sp: '31852000NBS0024',
-    pmc_status: 'Done'
-  };
+  const id = req.params.id;
+  db.query("SELECT * FROM devices WHERE device_id = ?", [id], (err, results) => {
+    const data = results[0];
 
-  res.render('pages/editLaptop', {
-    title: 'Edit Perangkat',
-    active: 'laptop',
-    layout: 'layouts/main',
-    css: 'edit.css',
-    device
+    db.query("SELECT status_PMC FROM histories WHERE device_id = ? ORDER BY riwayat_id DESC LIMIT 1", [id], (errHist, resultHist) => {
+        let lastStatus = 'Pending';
+        if (resultHist && resultHist.length > 0) {
+            lastStatus = resultHist[0].status_PMC;
+        }
+        
+        data.status_pmc = lastStatus;
+        data.location = data.lokasi; 
+
+        res.render("pages/editLaptop", { 
+          title: "Edit Laptop", layout: "layouts/main", css: "edit.css", active: "laptop", laptop: data 
+        });
+    });
   });
 });
 
-/* ================= UPDATE ================= */
+// ==================================================
+// 5. UPDATE (FIX: MENGUBAH LABEL 'ADD' JADI 'UPDATE')
+// ==================================================
 router.post('/detail/update/:id', (req, res) => {
-  console.log('DATA UPDATE:', req.body);
+  const id = req.params.id;
+  const idTeknisi = req.session.user.id; // AMBIL ID TEKNISI
+  const { no, model, serial_number, cocd, lokasi, employee_no, checked_out, jadwal_PMC, status_pmc } = req.body; 
+
+  const sqlUpdateDevice = "UPDATE devices SET no=?, model=?, serial_number=?, cocd=?, lokasi=?, employee_no=?, checked_out=?, jadwal_PMC=? WHERE device_id=?";
+  const valuesDevice = [no, model, serial_number, cocd, lokasi, employee_no, checked_out, jadwal_PMC, id];
+
+  db.query(sqlUpdateDevice, valuesDevice, (err) => {
+    if (err) return res.status(500).send("Gagal Update Device: " + err.message);
+
+    const tahun = new Date().getFullYear();
+    const sqlCheck = "SELECT riwayat_id FROM histories WHERE device_id = ? AND tahun = ?";
+    
+    db.query(sqlCheck, [id, tahun], (errCheck, resultCheck) => {
+        if (errCheck) return res.redirect(`/laptop/detail/${id}`);
+
+        if (resultCheck.length > 0) {
+            // UPDATE: Masukkan checked_by teknisi yang baru saja update
+            const sqlUpdateHist = `
+                UPDATE histories 
+                SET status_PMC = ?, tanggal_cek = NOW(), action_type = 'Update', checked_by = ? 
+                WHERE device_id = ? AND tahun = ?
+            `;
+            
+            db.query(sqlUpdateHist, [status_pmc, idTeknisi, id, tahun], (errUpdate) => {
+                if(errUpdate) console.error("Update History Error:", errUpdate);
+                res.redirect(`/laptop/detail/${id}`);
+            });
+        } else {
+            // INSERT: Masukkan checked_by teknisi
+            const sqlInsertHist = "INSERT INTO histories (device_id, tahun, status_PMC, tanggal_cek, action_type, checked_by) VALUES (?, ?, ?, NOW(), 'Update', ?)";
+            
+            db.query(sqlInsertHist, [id, tahun, status_pmc, idTeknisi], (errInsert) => {
+                if(errInsert) console.error("Insert History Error:", errInsert);
+                res.redirect(`/laptop/detail/${id}`);
+            });
+        }
+    });
+  });
 });
-/* ================= DELETE ================= */
+
+// ==================================================
+// 6. DELETE (VERSI FIX: PAKE NULL)
+// ==================================================
 router.post('/detail/delete/:id', (req, res) => {
   const id = req.params.id;
-  console.log('Perangkat dihapus dengan ID:', id);
 
-  // TODO: hapus perangkat dari database di sini
+  db.query("SELECT model, serial_number FROM devices WHERE device_id = ?", [id], (err, results) => {
+      if (err || results.length === 0) return res.redirect('/laptop');
 
-  res.redirect('/laptop'); // kembali ke halaman list PMC
+      const d = results[0];
+      const infoBackup = `${d.model} (${d.serial_number})`; 
+      const tahun = new Date().getFullYear();
+
+      // Fix: Gunakan NULL pada device_id
+      const sqlHist = `
+        INSERT INTO histories 
+        (device_id, tahun, status_PMC, tanggal_cek, action_type, info_backup) 
+        VALUES (NULL, ?, 'Done', NOW(), 'Delete', ?)
+      `;
+
+      db.query(sqlHist, [tahun, infoBackup], (errHist) => {
+          if (errHist) console.error("Gagal simpan history hapus:", errHist);
+
+          db.query("DELETE FROM devices WHERE device_id = ?", [id], () => {
+              res.redirect('/laptop');
+          });
+      });
+  });
 });
+
 module.exports = router;

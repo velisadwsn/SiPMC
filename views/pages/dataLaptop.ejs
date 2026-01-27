@@ -1,39 +1,88 @@
-  <main class="main">
-    <!-- HEADER HALAMAN -->
+<main class="main">
     <div class="page-header">
-      <div class="page-title">Data laptop</div>
-      <div class="page-actions">
-      <a href="/laptop/tambah" class="btn btn-add">+ Tambah Data</a>
-      
-      <div class="filter-area">
-    <select>
-      <option>Januari 2024</option>
-      <option>Februari2024</option>
-      <option>Maret 2024</option>
-    </select>
+        <div class="page-title">Data Laptop - <%= bulan || "Semua Bulan" %></div>
+    </div>
 
-        <div class="search-box">
-          <input type="text" placeholder="Cari">
-    
+    <div class="top-bar">
+        
+        <a href="/laptop/tambah" class="btn-tambah">
+            + Tambah Data
+        </a>
+
+        <form action="/laptop" method="GET" class="search-form">
+            
+            <select name="bulan" class="input-select" onchange="this.form.submit()">
+                <option value="">- Semua Bulan -</option>
+                <option value="Januari" <%= bulan === 'Januari' ? 'selected' : '' %>>Januari</option>
+                <option value="Februari" <%= bulan === 'Februari' ? 'selected' : '' %>>Februari</option>
+                <option value="Maret" <%= bulan === 'Maret' ? 'selected' : '' %>>Maret</option>
+                <option value="April" <%= bulan === 'April' ? 'selected' : '' %>>April</option>
+                <option value="Mei" <%= bulan === 'Mei' ? 'selected' : '' %>>Mei</option>
+                <option value="Juni" <%= bulan === 'Juni' ? 'selected' : '' %>>Juni</option>
+                <option value="Juli" <%= bulan === 'Juli' ? 'selected' : '' %>>Juli</option>
+                <option value="Agustus" <%= bulan === 'Agustus' ? 'selected' : '' %>>Agustus</option>
+                <option value="September" <%= bulan === 'September' ? 'selected' : '' %>>September</option>
+                <option value="Oktober" <%= bulan === 'Oktober' ? 'selected' : '' %>>Oktober</option>
+                <option value="November" <%= bulan === 'November' ? 'selected' : '' %>>November</option>
+                <option value="Desember" <%= bulan === 'Desember' ? 'selected' : '' %>>Desember</option>
+            </select>
+
+            <input type="text" name="keyword" class="input-search" placeholder="Cari" value="<%= keyword %>">
+        
+        </form>
+    </div>
+
+    <% 
+       // Filter Data
+       const listPending = laptops.filter(item => item.status_terakhir !== 'Done'); 
+       const listDone = laptops.filter(item => item.status_terakhir === 'Done'); 
+    %>
+
+    <div class="split-container">
+        
+        <div class="col-split">
+            <div class="col-header pending">
+                <span>⏳ PENDING / PROSES</span>
+                <span class="count-badge"><%= listPending.length %></span>
+            </div>
+
+            <% if (listPending.length === 0) { %>
+                <div class="empty-msg">Tidak ada data pending.</div>
+            <% } else { %>
+                <% listPending.forEach(item => { %>
+                    <div class="list-card">
+                        <div class="card-left">
+                            <div class="model-text"><%= item.model %></div>
+                            <div class="sn-text">SN: <%= item.serial_number %></div>
+                            <div class="no-text">No: <%= item.no %></div>
+                        </div>
+                        <a href="/laptop/detail/<%= item.device_id %>" class="btn-detail">Detail</a>
+                    </div>
+                <% }) %>
+            <% } %>
         </div>
-      </div>
-    </div>
-    </div>
-    <!-- LIST PC -->
-    <div class="pc-list">
-      <% for(let i = 0; i < 8; i++) { %>
-        <div class="pc-card">
-          <div class="pc-code">0024</div>
 
-          <div class="pc-info">
-            <strong>Probook 440 G10</strong>
-            <span>5CD40339N2</span>
-          </div>
+        <div class="col-split">
+            <div class="col-header done">
+                <span>✅ SELESAI (DONE)</span>
+                <span class="count-badge"><%= listDone.length %></span>
+            </div>
 
-          <a href="/laptop/detail" class="btn-detail">Detail</a>
+            <% if (listDone.length === 0) { %>
+                <div class="empty-msg">Belum ada yang selesai.</div>
+            <% } else { %>
+                <% listDone.forEach(item => { %>
+                    <div class="list-card">
+                        <div class="card-left">
+                            <div class="model-text"><%= item.model %></div>
+                            <div class="sn-text">SN: <%= item.serial_number %></div>
+                            <div class="jadwal-text">Jadwal: <%= item.no %></div>
+                        </div>
+                        <a href="/laptop/detail/<%= item.device_id %>" class="btn-detail">Detail</a>
+                    </div>
+                <% }) %>
+            <% } %>
         </div>
-      <% } %>
+
     </div>
-
-  </main>
-
+</main>

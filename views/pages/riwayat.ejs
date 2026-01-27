@@ -1,31 +1,60 @@
-
 <main class="main">
-     <div class="page-header">
-     <div class="page-title">Riwayat Perangkat</div>
-</div>
+    <div class="page-header">
+        <div class="page-title">Riwayat Perangkat</div>
+    </div>
 
-  <div class="riwayat-wrapper">
+    <div class="history-list">
+        <% if (histories.length === 0) { %>
+            <div class="empty-state">Belum ada riwayat aktivitas.</div>
+        <% } else { %>
+            <% histories.forEach(item => { %>
+                <% 
+                   let cssClass = '';
+                   if(item.action_type === 'Add') cssClass = 'added';
+                   else if(item.action_type === 'Delete') cssClass = 'deleted';
+                %>
+                <div class="history-item <%= cssClass %>">
+                    <div class="history-content">
+                        <div class="history-title">
+                            <% if (item.action_type === 'Add') { %>
+                                <span style="color: #2e7d32; font-weight: bold;">Perangkat Baru Ditambahkan</span>
+                            <% } else if (item.action_type === 'Delete') { %>
+                                <span style="color: #c62828; font-weight: bold;">Perangkat Telah Dihapus</span>
+                            <% } else { %>
+                                <% if (item.status_PMC === 'Done') { %>
+                                    <span style="color: #2e7d32; font-weight: bold;">Maintenance Selesai (Done)</span>
+                                <% } else { %>
+                                    <span style="color: #ef6c00; font-weight: bold;">Status Diupdate ke Pending</span>
+                                <% } %>
+                            <% } %>
 
-    <% riwayat.forEach(item => { %>
-      <!-- CARD -->
-      <a href="/pmc/detail/<%= item.id %>" class="riwayat-card">
+                            pada <b>Laptop</b>
 
-        <div class="left">
-          <h3><%= item.model %></h3>
-          <p>
-            <b><%= item.aksi %></b> oleh 
-            <span><%= item.oleh %></span>
-          </p>
-        </div>
-
-        <div class="right">
-          <span class="date"><%= item.tanggal %></span>
-        </div>
-
-      </a>
-    <% }) %>
-  
-  </div>
+                            <% if (item.action_type === 'Delete') { %>
+                                <span style="font-weight: normal; color: #444;"> 
+                                    <%= item.info_backup %> 
+                                </span>
+                            <% } %>
+                        </div>
+                        <div class="history-subtitle">
+                            <% if (item.action_type === 'Delete') { %>
+                                Data perangkat ini sudah dihapus dari sistem.
+                            <% } else { %>
+                                <%= item.model %> | SN: <%= item.serial_number %>
+                            <% } %>
+                        </div>
+                    </div>
+                    <div class="history-meta">
+                        <div class="history-date">
+                            <%= new Date(item.tanggal_cek).toLocaleDateString('id-ID', { day: 'numeric', month: 'short' }) %>, 
+                            <%= new Date(item.tanggal_cek).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }) %>
+                        </div>
+                        <% if (item.action_type !== 'Delete') { %>
+                            <a href="/laptop/detail/<%= item.device_id %>" class="history-link">Lihat Detail &rarr;</a>
+                        <% } %>
+                    </div>
+                </div>
+            <% }) %>
+        <% } %>
+    </div>
 </main>
-</div>
-

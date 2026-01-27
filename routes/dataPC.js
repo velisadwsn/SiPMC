@@ -1,161 +1,212 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const db = require('../config/database');
+const db = require("../config/database");
 
-// 1. DAFTAR DATA PC
-router.get('/', (req, res) => {
-  const bulanAktif = req.query.bulan || 'Januari';
-  const keyword = req.query.keyword || ''; 
+// ==================================================
+// 1. HALAMAN UTAMA (LIST LAPTOP + STATUS TERAKHIR)
+// ==================================================
+router.get("/", (req, res) => {
+  const { bulan, keyword } = req.query;
 
-  const sql = `
-    SELECT device_id, no, model, serial_number
-    FROM devices
-    WHERE device_type = 'PC'
-    AND jadwal_PMC LIKE ?
-    AND (model LIKE ? OR serial_number LIKE ?)
+  let sql = `
+    SELECT d.*, 
+    COALESCE(
+        (SELECT status_PMC FROM histories h WHERE h.device_id = d.device_id ORDER BY h.riwayat_id DESC LIMIT 1),
+        'Pending'
+    ) as status_terakhir
+    FROM devices d 
+    WHERE d.device_type = 'PC'
   `;
-
-  db.query(sql, [`%${bulanAktif}%`, `%${keyword}%`, `%${keyword}%`], (err, results) => {
-    if (err) return res.status(500).send('Query error');
-    res.render('pages/dataPC', {
-      title: 'Data PC',
-      active: 'pc',
-      css: 'dataDevice.css',
-      pcs: results,
-      bulanAktif,
-      keyword 
-    });
-  });
-});
-
-// 2. DETAIL DATA PC
-router.get('/detail/:id', (req, res) => {
-  const id = req.params.id;
-  const sql = `
-    SELECT 
-      d.device_id AS id, d.model, d.employee_no, d.serial_number AS serial, 
-      d.checked_out, d.site, d.hostname, d.lokasi, d.jadwal_pmc, 
-      IFNULL(h.status_pmc, 'Pending') AS status_pmc,
-      u.fullname AS pemeriksa -- Ambil nama asli dari JOIN
-    FROM devices d
-    LEFT JOIN histories h ON d.device_id = h.device_id
-    LEFT JOIN users u ON h.checked_by = u.user_id
-    WHERE d.device_id = ?
-    ORDER BY h.riwayat_id DESC LIMIT 1
-  `;
-
-  db.query(sql, [id], (err, results) => {
-    if (err) return res.status(500).send("Database Error: " + err.message);
-    res.render('pages/detailPC', {
-      title: 'Detail Perangkat',
-      active: 'pc',
-      css: 'detail.css',
-      pmc: results[0] 
-    });
-  });
-});
-
-// HALAMAN FORM EDIT PC
-router.get('/detail/edit/:id', (req, res) => {
-  const id = req.params.id;
-  // Kita ambil data perangkat sekaligus status PMC terakhirnya
-  const sql = `
-    SELECT 
-      d.device_id AS id, d.model, d.employee_no, d.serial_number AS serial, 
-      d.checked_out, d.site, d.hostname AS hostname_sp, d.lokasi, d.jadwal_pmc,
-      IFNULL(h.status_pmc, 'Pending') AS pmc_status
-    FROM devices d
-    LEFT JOIN histories h ON d.device_id = h.device_id
-    WHERE d.device_id = ?
-    ORDER BY h.riwayat_id DESC LIMIT 1
-  `;
-
-  db.query(sql, [id], (err, results) => {
-    if (err) return res.status(500).send(err.message);
-    if (results.length === 0) return res.status(404).send("Data tidak ditemukan");
-
-    res.render('pages/editPC', {
-      title: 'Edit Perangkat',
-      active: 'pc',
-      css: 'edit.css',
-      device: results[0]
-    });
-  });
-});
-
-// 3. UPDATE DATA PC (PENGGUNAAN ID USER)
-router.post('/detail/update/:id', (req, res) => {
-  const deviceId = req.params.id;
-  const idTeknisi = req.session.user.id; // AMBIL ID, BUKAN NAMA
   
-  const { model, serial, site, lokasi, employee_no, checked_out, hostname_sp, jadwal_pmc, pmc_status } = req.body;
+  let params = [];
 
-  const sqlUpdateDevice = `UPDATE devices SET model=?, serial_number=?, site=?, lokasi=?, employee_no=?, checked_out=?, hostname=?, jadwal_pmc=? WHERE device_id=?`;
-  
-  db.query(sqlUpdateDevice, [model, serial, site, lokasi, employee_no, checked_out, hostname_sp, jadwal_pmc, deviceId], (err) => {
-    if (err) return res.status(500).send(err.message);
+  if (bulan) { sql += " AND d.jadwal_PMC LIKE ?"; params.push(`%${bulan}%`); }
+  if (keyword) { sql += " AND (d.no LIKE ? OR d.model LIKE ? OR d.serial_number LIKE ?)"; params.push(`%${keyword}%`, `%${keyword}%`, `%${keyword}%`); }
 
-    const sqlCheck = `SELECT riwayat_id FROM histories WHERE device_id = ? AND tahun = YEAR(NOW()) LIMIT 1`;
-    db.query(sqlCheck, [deviceId], (err, rows) => {
-      if (rows.length > 0) {
-        // UPDATE: Kirim idTeknisi (Angka)
-        const sqlUpdateH = `UPDATE histories SET status_pmc=?, checked_by=?, tanggal_cek=NOW() WHERE riwayat_id=?`;
-        db.query(sqlUpdateH, [pmc_status, idTeknisi, rows[0].riwayat_id], (err) => {
-          if (err) return res.status(500).send(err.message);
-          res.redirect(`/pc/detail/${deviceId}`);
-        });
-      } else {
-        // INSERT: Kirim idTeknisi (Angka)
-        const sqlInsertH = `INSERT INTO histories (device_id, status_pmc, checked_by, tanggal_cek, tahun) VALUES (?, ?, ?, NOW(), YEAR(NOW()))`;
-        db.query(sqlInsertH, [deviceId, pmc_status, idTeknisi], (err) => {
-          if (err) return res.status(500).send(err.message);
-          res.redirect(`/pc/detail/${deviceId}`);
-        });
-      }
+  db.query(sql, params, (err, results) => {
+    if (err) return res.status(500).send("DB Error");
+    res.render("pages/dataPC", {
+      title: "Data PC", layout: "layouts/main", css: "dataDevice.css",
+      active: "pc", pcs: results, bulan: bulan || "", keyword: keyword || ""
     });
   });
 });
 
-// 4. TAMBAH DATA PC
-
+// ==================================================
+// 2. TAMBAH PC (CATAT HISTORY 'ADD')
+// ==================================================
 router.get('/tambah', (req, res) => {
-  res.render('pages/tambahDataPC', { 
-    title: 'Tambah Perangkat Baru',
-    active: 'pc',
-    css: 'edit.css' 
-  });
+  res.render("pages/tambahPC", { 
+    title: "Tambah PC", 
+    layout: "layouts/main", 
+    css: "edit.css", 
+    active: "pc" });
 });
+
 
 router.post('/tambah', (req, res) => {
-  const { no, device_type, model, serial, site, lokasi, employee_no, checked_out, hostname_sp, jadwal_pmc, pmc_status } = req.body;
-  const idTeknisi = req.session.user.id; // AMBIL ID
+  const { model, serial_number, site, lokasi, employee_no, checked_out, no, jadwal_PMC, status_pmc } = req.body;
+  const idTeknisi = req.session.user.id; // Ambil ID User
+  
+  const sqlInsert = "INSERT INTO devices (device_type, model, serial_number, site, lokasi, employee_no, checked_out, no, jadwal_PMC) VALUES ('PC', ?, ?, ?, ?, ?, ?, ?, ?)";
+  const values = [model, serial_number, site, lokasi, employee_no, checked_out, no, jadwal_PMC];
 
-  const sqlDevice = `INSERT INTO devices (no, device_type, model, serial_number, site, lokasi, employee_no, checked_out, hostname, jadwal_pmc) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
-
-  db.query(sqlDevice, [no, device_type, model, serial, site, lokasi, employee_no, checked_out, hostname_sp, jadwal_pmc], (err, result) => {
+  db.query(sqlInsert, values, (err, result) => {
     if (err) return res.status(500).send(err.message);
-    const newDeviceId = result.insertId;
+    
+    const tahun = new Date().getFullYear();
+    const infoPerangkat = `${model} ${serial_number}`; 
+    
+    // Tambahkan kolom checked_by di sini
+    const sqlHist = `
+        INSERT INTO histories 
+        (device_id, tahun, status_PMC, tanggal_cek, action_type, info_backup, checked_by) 
+        VALUES (?, ?, ?, NOW(), 'Add', ?, ?)
+    `;
+    
+    db.query(sqlHist, [result.insertId, tahun, status_pmc, infoPerangkat, idTeknisi], (errHist) => {
+        if (errHist) console.error("Gagal simpan history tambah:", errHist);
+        res.redirect('/pc');
+    });
+  });
+});
+// ==================================================
+// 3. DETAIL PC (BACA STATUS DARI HISTORY)
+// ==================================================
+router.get('/detail/:id', (req, res) => {
+  const id = req.params.id;
 
-    const sqlHistory = `INSERT INTO histories (device_id, status_pmc, checked_by, tanggal_cek, tahun) VALUES (?, ?, ?, NOW(), YEAR(NOW()))`;
-    db.query(sqlHistory, [newDeviceId, pmc_status, idTeknisi], (err) => {
-      if (err) return res.status(500).send(err.message);
-      res.redirect('/pc');
+  db.query("SELECT * FROM devices WHERE device_id = ?", [id], (err, results) => {
+    if (results.length === 0) return res.status(404).send("Not Found");
+    const data = results[0];
+
+    const sqlHist = "SELECT status_PMC FROM histories WHERE device_id = ? ORDER BY riwayat_id DESC LIMIT 1";
+
+    db.query(sqlHist, [id], (errHist, resultHist) => {
+        let lastStatus = 'Pending';
+        if (resultHist && resultHist.length > 0) {
+           lastStatus = resultHist[0].status_PMC;
+        }
+
+        const pmcData = {
+          id: data.device_id, model: data.model, employee_no: data.employee_no || '-',
+          serial: data.serial_number, checked_out: data.checked_out || '-',
+          site: data.site || '-', hostname: data.no, lokasi: data.lokasi || '-',
+          
+          // Kirim dua versi biar aman di EJS
+          jadwal_PMC: data.jadwal_PMC, 
+          jadwal_pmc: data.jadwal_PMC, 
+          
+          status_pmc: lastStatus
+        };
+
+        res.render("pages/detailPC", {
+          title: "Detail Perangkat", layout: "layouts/main", css: "detail.css",
+          active: "pc", pmc: pmcData, histories: []
+        });
     });
   });
 });
 
-router.post('/detail/delete/:id', (req, res) => {
-    const id = req.params.id;
-    
-    // Hapus history dulu karena ada foreign key, baru hapus device-nya
-    db.query('DELETE FROM histories WHERE device_id = ?', [id], (err) => {
-        if (err) return res.status(500).send(err.message);
+// ==================================================
+// 4. EDIT FORM
+// ==================================================
+router.get('/detail/edit/:id', (req, res) => {
+  const id = req.params.id;
+  db.query("SELECT * FROM devices WHERE device_id = ?", [id], (err, results) => {
+    const data = results[0];
+
+    db.query("SELECT status_PMC FROM histories WHERE device_id = ? ORDER BY riwayat_id DESC LIMIT 1", [id], (errHist, resultHist) => {
+        let lastStatus = 'Pending';
+        if (resultHist && resultHist.length > 0) {
+            lastStatus = resultHist[0].status_PMC;
+        }
         
-        db.query('DELETE FROM devices WHERE device_id = ?', [id], (err) => {
-            if (err) return res.status(500).send(err.message);
-            res.redirect('/pc');
+        data.status_pmc = lastStatus;
+        data.location = data.lokasi; 
+
+        res.render("pages/editPC", { 
+          title: "Edit PC", layout: "layouts/main", css: "edit.css", active: "pc", pc: data 
         });
     });
+  });
+});
+
+// ==================================================
+// 5. UPDATE (FIX: MENGUBAH LABEL 'ADD' JADI 'UPDATE')
+// ==================================================
+router.post('/detail/update/:id', (req, res) => {
+    const id = req.params.id;
+    // 1. Ambil ID User dari session
+    const idTeknisi = req.session.user.id; 
+    const { no, model, serial_number, site, lokasi, employee_no, checked_out, jadwal_PMC, status_pmc } = req.body; 
+
+    const sqlUpdateDevice = "UPDATE devices SET no=?, model=?, serial_number=?, site=?, lokasi=?, employee_no=?, checked_out=?, jadwal_PMC=? WHERE device_id=?";
+    const valuesDevice = [no, model, serial_number, site, lokasi, employee_no, checked_out, jadwal_PMC, id];
+
+    db.query(sqlUpdateDevice, valuesDevice, (err) => {
+        if (err) return res.status(500).send("Gagal Update Device: " + err.message);
+
+        const tahun = new Date().getFullYear();
+        const sqlCheck = "SELECT riwayat_id FROM histories WHERE device_id = ? AND tahun = ?";
+        
+        db.query(sqlCheck, [id, tahun], (errCheck, resultCheck) => {
+            if (errCheck) return res.redirect(`/pc/detail/${id}`);
+
+            if (resultCheck.length > 0) {
+                // A. UPDATE: Tambahkan checked_by = ?
+                const sqlUpdateHist = `
+                    UPDATE histories 
+                    SET status_PMC = ?, tanggal_cek = NOW(), action_type = 'Update', checked_by = ? 
+                    WHERE device_id = ? AND tahun = ?
+                `;
+                
+                db.query(sqlUpdateHist, [status_pmc, idTeknisi, id, tahun], (errUpdate) => {
+                    if(errUpdate) console.error("Update History Error:", errUpdate);
+                    res.redirect(`/pc/detail/${id}`);
+                });
+
+            } else {
+                // B. INSERT BARU: Tambahkan checked_by ke kolom
+                const sqlInsertHist = "INSERT INTO histories (device_id, tahun, status_PMC, tanggal_cek, action_type, checked_by) VALUES (?, ?, ?, NOW(), 'Update', ?)";
+                
+                db.query(sqlInsertHist, [id, tahun, status_pmc, idTeknisi], (errInsert) => {
+                    if(errInsert) console.error("Insert History Error:", errInsert);
+                    res.redirect(`/pc/detail/${id}`);
+                });
+            }
+        });
+    });
+});
+
+// ==================================================
+// 6. DELETE (VERSI FIX: PAKE NULL)
+// ==================================================
+router.post('/detail/delete/:id', (req, res) => {
+  const id = req.params.id;
+
+  db.query("SELECT model, serial_number FROM devices WHERE device_id = ?", [id], (err, results) => {
+      if (err || results.length === 0) return res.redirect('/pc');
+
+      const d = results[0];
+      const infoBackup = `${d.model} (${d.serial_number})`; 
+      const tahun = new Date().getFullYear();
+
+      // Fix: Gunakan NULL pada device_id
+      const sqlHist = `
+        INSERT INTO histories 
+        (device_id, tahun, status_PMC, tanggal_cek, action_type, info_backup) 
+        VALUES (NULL, ?, 'Done', NOW(), 'Delete', ?)
+      `;
+
+      db.query(sqlHist, [tahun, infoBackup], (errHist) => {
+          if (errHist) console.error("Gagal simpan history hapus:", errHist);
+
+          db.query("DELETE FROM devices WHERE device_id = ?", [id], () => {
+              res.redirect('/pc');
+          });
+      });
+  });
 });
 
 module.exports = router;

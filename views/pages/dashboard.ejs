@@ -1,26 +1,44 @@
-
-  <main class="main">
-    <h1>Selamat Datang, Admin Satu!</h1>
-
-    <div class="cards">
-      <div class="card dark">
-        <h3>TOTAL <span>46</span></h3>
-        <p>19 Laptop</p>
-        <p>27 PC</p>
-      </div>
-
-      <div class="card gray">
-        <h3>⟳ <span>37</span></h3>
-        <p>15 Laptop</p>
-        <p>22 PC</p>
-      </div>
-
-      <div class="card green">
-        <h3>✔ <span>9</span></h3>
-        <p>4 Laptop</p>
-        <p>5 PC</p>
-      </div>
+<main class="main">
+    <div class="page-header">
+        <div class="page-title">
+            Dashboard PMC - <%= currentMonth %> <%= currentYear %>
+        </div>
     </div>
 
-  </main>
+    <div class="dashboard-grid">
+      
+      <div class="stat-card dark-blue">
+        <div class="card-top">
+            <h3 class="card-label">TOTAL JADWAL <%= currentMonth.toUpperCase() %></h3>
+            <span class="card-number"><%= stats.total %></span>
+        </div>
+        <div class="card-bottom">
+            <div class="detail-item"><%= stats.totalLaptop %> Laptop</div>
+            <div class="detail-item"><%= stats.totalPC %> PC</div>
+        </div>
+      </div>
 
+      <div class="stat-card grey">
+        <div class="card-top">
+            <h3 class="card-label">PENDING / PROSES</h3>
+            <span class="card-number"><%= stats.pending %></span>
+        </div>
+        <div class="card-bottom">
+            <div class="detail-item"><%= stats.pendingLaptop %> Laptop</div>
+            <div class="detail-item"><%= stats.pendingPC %> PC</div>
+        </div>
+      </div>
+
+      <div class="stat-card soft-green">
+        <div class="card-top">
+            <h3 class="card-label">SELESAI (DONE)</h3>
+            <span class="card-number" style="color: white;"><%= stats.done %></span>
+        </div>
+        <div class="card-bottom">
+            <div class="detail-item"><%= stats.doneLaptop %> Laptop</div>
+            <div class="detail-item"><%= stats.donePC %> PC</div>
+        </div>
+      </div>
+
+    </div>
+</main>

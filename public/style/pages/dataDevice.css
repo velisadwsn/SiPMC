@@ -3,153 +3,216 @@
   flex: 1;
   padding: 20px;
   overflow-y: auto;
-  background: #e6efff;
+  background: #e6efff; /* Background biru muda kesukaanmu */
 }
 
-/* ================= PAGE HEADER (LAYOUT GROUPING) ================= */
+/* ================= JUDUL HALAMAN ================= */
 .page-header {
-  display: grid;
-  /* Kolom 1: Mengambil sisa ruang (1fr) */
-  /* Kolom 2: Tombol Tambah (auto) */
-  /* Kolom 3: Filter Area (auto) */
-  grid-template-columns: 1fr auto auto; 
-  gap: 15px;
-  margin-bottom: 30px;
-  align-items: center;
+  margin-bottom: 25px;
 }
 
-/* TITLE PC - Mengambil seluruh baris pertama */
 .page-title {
-  grid-column: 1 / -1; 
   background: #b7c4d8;
-  padding: 18px 35px;
-  font-size: 34px;
+  padding: 15px 30px;
+  font-size: 28px;
   font-weight: bold;
   border-radius: 10px;
   color: #41546f;
   width: fit-content;
-  margin-bottom: 5px; /* Jarak tambahan ke baris bawah */
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
 }
 
-/* CONTAINER TOMBOL TAMBAH - Pindah ke baris kedua, kolom kedua */
-.page-actions {
-  grid-column: 2;
+/* ================= BAGIAN ATAS (TOMBOL & SEARCH) ================= */
+/* Ini yang bikin tampilannya seperti gambar WhatsApp */
+.top-bar {
   display: flex;
   align-items: center;
+  gap: 15px; /* Jarak antara tombol dan kolom cari */
+  margin-bottom: 25px;
 }
 
-/* FILTER AREA - Baris kedua, kolom ketiga (Paling kanan) */
-.filter-area {
-  grid-column: 3;
-  display: flex;
-  gap: 8px;
-  align-items: center;
-}
-
-/* ================= BENTUK ELEMEN (TETAP SAMA) ================= */
-
-.btn-add {
-  background: #0c2b57;
+/* Tombol Tambah (Biru Tua) */
+.btn-tambah {
+  background: #0c2b57; /* Warna asli kamu */
   color: white;
-  padding: 10px 18px;
+  padding: 12px 20px;
   border-radius: 8px;
   text-decoration: none;
   font-weight: 600;
   white-space: nowrap;
+  display: inline-block;
+  transition: background 0.2s;
 }
 
-.btn-add:hover {
-  background: #154b96;
+.btn-tambah:hover {
+  background: #081d3a;
 }
 
-.filter-area select {
-  padding: 8px 12px;
-  border-radius: 6px;
-  font-size: 16px;
-}
-
-.search-box {
-  position: relative;
-}
-
-.search-box input {
-  padding: 12px 40px 12px 15px;
-  border-radius: 10px;
-  border: 1px solid #999;
-  font-size: 16px;
-}
-
-.search-box .icon {
-  position: absolute;
-  right: 12px;
-  top: 50%;
-  transform: translateY(-50%);
-}
-
-/* ================= PC LIST & CARD ================= */
-.pc-list {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 25px;
-}
-
-.pc-card {
-  background: #b7c4d8;
-  padding: 22px 25px;
-  border-radius: 12px;
+/* Form Pencarian */
+.search-form {
   display: flex;
+  gap: 10px;
   align-items: center;
-  gap: 25px;
 }
 
-.pc-code {
-  font-size: 20px;
-  font-weight: bold;
-}
-
-.pc-info {
-  flex: 1;
-}
-
-.pc-info strong {
-  display: block;
-  font-size: 18px;
-}
-
-.pc-info span {
-  font-size: 15px;
-}
-
-.btn-detail {
-  background: #0c2b57;
-  color: white;
-  padding: 10px 18px;
+/* Input Select & Text Search */
+.input-select, .input-search {
+  padding: 11px 15px;
   border-radius: 8px;
-  text-decoration: none;
-  font-weight: 600;
+  border: 1px solid #ccc;
+  font-size: 15px;
+  outline: none;
+  background: white;
+  color: #333;
+}
+
+.input-search {
+  width: 220px; /* Lebar kolom cari */
+}
+
+/* Responsif untuk HP (Menu atas jadi turun ke bawah) */
+@media (max-width: 700px) {
+  .top-bar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .search-form {
+    flex-direction: column;
+  }
+  .input-search {
+    width: 100%;
+  }
+}
+
+/* ================= SPLIT VIEW (PENDING vs DONE) ================= */
+/* Layout Kiri-Kanan */
+
+.split-container {
+    display: flex;
+    gap: 25px;
+    align-items: flex-start;
+}
+
+.col-split {
+    flex: 1;
+    background-color: #f8f9fa; /* Warna kolom agak putih abu */
+    padding: 20px;
+    border-radius: 12px;
+    min-height: 300px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+}
+
+/* Header Kolom (Pending / Done) */
+.col-header {
+    font-size: 16px;
+    font-weight: 800;
+    margin-bottom: 20px;
+    padding-bottom: 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.col-header.pending {
+    color: #ef6c00;
+    border-bottom: 2px solid #ffe0b2;
+}
+
+.col-header.done {
+    color: #2e7d32;
+    border-bottom: 2px solid #c8e6c9;
+}
+
+/* Badge Angka Jumlah Data */
+.count-badge {
+    background: rgba(0,0,0,0.08);
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    color: #555;
+    font-weight: bold;
+}
+
+/* ================= KARTU LIST ITEM ================= */
+.list-card {
+    background: white;
+    margin-bottom: 15px;
+    padding: 18px;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.03);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: transform 0.2s, box-shadow 0.2s;
+    border-left: 4px solid transparent; /* Garis dekorasi kiri */
+}
+
+/* Hover Effect pada kartu */
+.list-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+}
+
+/* Teks dalam kartu */
+.card-left {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.model-text {
+    font-size: 16px;
+    font-weight: 700;
+    color: #2c3e50;
+}
+
+.sn-text {
+    font-size: 13px;
+    color: #7f8c8d;
+}
+
+.no-text {
+    font-size: 12px;
+    color: #95a5a6;
+    font-style: italic;
+}
+
+.jadwal-text {
+    font-size: 12px;
+    color: #27ae60;
+    font-weight: 600;
+    margin-top: 2px;
+}
+
+/* Tombol Detail Kecil */
+.btn-detail {
+    background: #0c2b57;
+    color: white;
+    padding: 8px 15px;
+    border-radius: 6px;
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 600;
 }
 
 .btn-detail:hover {
-  background: #154b96;
+    background: #1a4a8a;
 }
 
-/* ================= RESPONSIVE ================= */
+/* Pesan Kosong */
+.empty-msg {
+    text-align: center;
+    color: #999;
+    padding: 30px;
+    font-style: italic;
+    font-size: 14px;
+}
+
+/* Responsif Split View di HP */
 @media (max-width: 900px) {
-  .page-header {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
-  .page-actions, .filter-area {
-    width: 100%;
-  }
-
-  .filter-area {
-    justify-content: space-between;
-  }
-
-  .pc-list {
-    grid-template-columns: 1fr;
-  }
+    .split-container {
+        flex-direction: column;
+    }
 }
