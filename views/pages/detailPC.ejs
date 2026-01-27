@@ -44,11 +44,10 @@
     <div id="hapusModal" class="modal">
       <div class="modal-content">
         <h3>Hapus Data?</h3>
-        <p>Data dengan ID <%= pmc.id %> akan dihapus permanen.</p>
         <div class="modal-actions">
-          <button onclick="closeHapusModal()" class="btn-red">Batal</button>
+          <button onclick="closeHapusModal()" class="btn-green">Batal</button>
           <form action="/pc/detail/delete/<%= pmc.id %>" method="POST" style="display:inline;">
-            <button type="submit" class="btn-green">Lanjutkan Hapus</button>
+            <button type="submit" class="btn-red">Ya, Hapus</button>
           </form>
         </div>
       </div>

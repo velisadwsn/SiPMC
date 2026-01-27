@@ -1,85 +1,96 @@
-
-  <main class="main">
-    <div class="page-header">
-        <div class="page-title">Edit Detail Perangkat</div>
-    </div>
-    <!-- ================= DETAIL PERANGKAT ================= -->
-    <div class="card">
-     
-
-      <form action="/app.js pmc.id %>" method="POST">
-        <div class="form-grid-2col">
-
-  <!-- ===== KOLOM KIRI ===== -->
-  <div class="col">
-    <div class="form-row">
-      <label>Model</label>
-      <input type="text" name="model" value="<%= device.model %>">
-    </div>
-
-    <div class="form-row">
-      <label>Serial Number</label>
-      <input type="text" name="serial" value="<%= device.serial %>">
-    </div>
-
-    <div class="form-row">
-      <label>COCD</label>
-      <input type="text" name="cocd" value="<%= device.cocd %>">
-    </div>
-
-    <div class="form-row">
-      <label>Lokasi</label>
-      <input type="text" name="lokasi" value="<%= device.lokasi %>">
-    </div>
+<main class="main">
+  <div class="page-header">
+    <div class="page-title">Edit Data Laptop</div>
   </div>
 
-  <!-- ===== KOLOM KANAN ===== -->
-  <div class="col">
-    <div class="form-row">
-      <label>Employee No</label>
-      <input type="text" name="employee_no" value="<%= device.employee_no %>">
-    </div>
-
-    <div class="form-row">
-      <label>Checked Out</label>
-      <input type="text" name="checked_out" value="<%= device.checked_out %>">
-    </div>
-
-    <div class="form-row">
-      <label>Hostname</label>
-      <input type="text" name="hostname_sp" value="<%= device.hostname_sp %>">
-    </div>
-  </div>
-
-</div>
-
-
-        <!-- ================= PMC ================= -->
-        <div class="card pmc-card">
-          <h3>Preventive Maintenance Check (PMC)</h3>
-
-          <div class="form-grid">
-            <div class="form-row">
-              <label>Jadwal PMC</label>
-              <input type="month" name="jadwal_pmc">
-            </div>
-
-            <div class="form-row">
-              <label>Status PMC</label>
-              <select name="pmc_status">
-                <option value="Done" <%= device.pmc_status === 'Done' ? 'selected' : '' %>>Done</option>
-                <option value="Pending" <%= device.pmc_status === 'Pending' ? 'selected' : '' %>>Pending</option>
-              </select>
-            </div>
+  <div class="card">
+    <form action="/laptop/detail/update/<%= laptop.device_id %>" method="POST">
+      
+      <div class="form-grid-2col">
+        
+        <div class="col">
+          
+          <div class="form-row">
+            <label>Model</label>
+            <input type="text" name="model" value="<%= laptop.model %>" required>
           </div>
+
+          <div class="form-row">
+            <label>Serial Number</label>
+            <input type="text" name="serial_number" value="<%= laptop.serial_number %>" required>
+          </div>
+
+          <div class="form-row">
+            <label>CoCd</label> <input type="text" name="cocd" value="<%= laptop.cocd %>">
+          </div>
+
+          <div class="form-row">
+            <label>Lokasi</label>
+            <input type="text" name="lokasi" value="<%= laptop.lokasi %>">
+          </div>
+
         </div>
 
-        <!-- ================= ACTION ================= -->
-        <div class="actions">
-          <a href="/laptop/detail" class="btn">Batal</a>
-          <button type="submit" class="btn primary">Simpan Perubahan</button>
+        <div class="col">
+          
+          <div class="form-row">
+            <label>Employee No</label>
+            <input type="text" name="employee_no" value="<%= laptop.employee_no %>">
+          </div>
+
+          <div class="form-row">
+            <label>Checked Out</label>
+            <input type="text" name="checked_out" value="<%= laptop.checked_out %>">
+          </div>
+
+          <div class="form-row">
+            <label>Hostname</label> <input type="text" name="no" value="<%= laptop.no %>" required>
+          </div>
+
         </div>
-      </form>
-    </div>
-  </main>
-</div>
+
+      </div>
+
+      <h3 style="margin-top: 30px; margin-bottom: 15px; color: #0c2b57; border-bottom: 1px solid #eee; padding-bottom: 10px;">
+        Preventive Maintenance Check (PMC)
+      </h3>
+      
+      <div class="form-grid"> 
+        
+        <div class="form-row">
+          <label>Jadwal PMC</label>
+          <select name="jadwal_PMC">
+             <option value="Januari" <%= laptop.jadwal_PMC === 'Januari' ? 'selected' : '' %>>Januari</option>
+             <option value="Februari" <%= laptop.jadwal_PMC === 'Februari' ? 'selected' : '' %>>Februari</option>
+             <option value="Maret" <%= laptop.jadwal_PMC === 'Maret' ? 'selected' : '' %>>Maret</option>
+             <option value="April" <%= laptop.jadwal_PMC === 'April' ? 'selected' : '' %>>April</option>
+             <option value="Mei" <%= laptop.jadwal_PMC === 'Mei' ? 'selected' : '' %>>Mei</option>
+             <option value="Juni" <%= laptop.jadwal_PMC === 'Juni' ? 'selected' : '' %>>Juni</option>
+             <option value="Juli" <%= laptop.jadwal_PMC === 'Juli' ? 'selected' : '' %>>Juli</option>
+             <option value="Agustus" <%= laptop.jadwal_PMC === 'Agustus' ? 'selected' : '' %>>Agustus</option>
+             <option value="September" <%= laptop.jadwal_PMC === 'September' ? 'selected' : '' %>>September</option>
+             <option value="Oktober" <%= laptop.jadwal_PMC === 'Oktober' ? 'selected' : '' %>>Oktober</option>
+             <option value="November" <%= laptop.jadwal_PMC === 'November' ? 'selected' : '' %>>November</option>
+             <option value="Desember" <%= laptop.jadwal_PMC === 'Desember' ? 'selected' : '' %>>Desember</option>
+          </select>
+        </div>
+
+        <div class="form-row">
+          <label>Status PMC</label>
+          <select name="status_pmc">
+            <option value="Pending" <%= laptop.status_pmc === 'Pending' ? 'selected' : '' %>>Pending</option>
+            <option value="Done" <%= laptop.status_pmc === 'Done' ? 'selected' : '' %>>Done</option>
+          </select>
+        </div>
+
+      </div>
+
+      <div class="actions">
+        <a href="/laptop/detail/<%= laptop.device_id %>" class="btn">Batal</a>
+        <button type="submit" class="btn primary">Simpan Perubahan</button>
+      </div>
+
+    </form>
+  </div>
+  
+</main>

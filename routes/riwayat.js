@@ -1,20 +1,35 @@
 const express = require('express');
 const router = express.Router();
+const db = require('../config/database');
 
 router.get('/', (req, res) => {
-  const riwayat = [
-    { laptop_model: 'Probook 440 G10', aksi: 'Ditambahkan', dilakukan_oleh: 'Admin', tanggal: '10 Jan 2025, 09:15' },
-    { laptop_model: 'Probook 440 G10', aksi: 'Diupdate', dilakukan_oleh: 'Admin', tanggal: '12 Jan 2025, 14:40' },
-    { laptop_model: 'Probook 440 G10', aksi: 'Ditambahkan', dilakukan_oleh: 'Admin', tanggal: '18 Jan 2025, 09:00' }
-  ];
+    // FIX: Tambahkan 'd.jadwal_PMC' di SELECT & LEFT JOIN
+    const sql = `
+        SELECT 
+            h.*,            
+            d.model,
+            d.serial_number,
+            d.no,
+            d.jadwal_PMC
+        FROM histories h
+        LEFT JOIN devices d ON h.device_id = d.device_id
+        ORDER BY h.tanggal_cek DESC
+    `;
 
-  res.render('pages/riwayat', {
-    title: 'Riwayat PMC',
-    active: 'riwayat',
-    layout: 'layouts/main',
-    css: 'riwayat.css',
-    riwayat
-  });
+    db.query(sql, (err, results) => {
+        if (err) {
+            console.error(err);
+            return res.status(500).send('Database Error');
+        }
+
+        res.render('pages/riwayat', {
+            title: 'Riwayat Aktivitas',
+            layout: 'layouts/main',
+            active: 'riwayat', 
+            css: 'riwayat.css', 
+            histories: results
+        });
+    });
 });
 
 module.exports = router;

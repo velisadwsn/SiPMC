@@ -1,22 +1,16 @@
-
-
 <main class="main">
-<div class="page-header">
+  <div class="page-header">
     <div class="page-title">Detail Perangkat</div>
-</div>
+  </div>
   
-
   <div class="card">
     <div class="grid">
       <div><b>Model:</b><span><%= pmc.model %></span></div>
       <div><b>Employee No:</b><span><%= pmc.employee_no %></span></div>
-
       <div><b>Serial Number:</b><span><%= pmc.serial %></span></div>
       <div><b>Checked Out:</b><span><%= pmc.checked_out %></span></div>
-
       <div><b>CoCd:</b><span><%= pmc.cocd %></span></div>
       <div><b>Hostname SP:</b><span><%= pmc.hostname %></span></div>
-
       <div><b>Lokasi:</b><span><%= pmc.lokasi %></span></div>
     </div>
   </div>
@@ -26,51 +20,41 @@
 
     <div class="pmc-row">
       <span>Jadwal PMC:</span>
-      <span><%= pmc.jadwal_pmc %></span>
+      <span style="font-weight: bold;"><%= pmc.jadwal_pmc || pmc.jadwal_PMC %></span>
     </div>
 
     <div class="pmc-row">
       <span>Status PMC:</span>
-      <span class="badge done"><%= pmc.status_pmc %> ✓</span>
+      
+      <span class="badge <%= pmc.status_pmc ? pmc.status_pmc.toLowerCase() : 'pending' %>">
+        <%= pmc.status_pmc %> 
+        <%= pmc.status_pmc === 'Done' ? '✓' : '' %>
+      </span>
     </div>
+  </div> 
+
+  <div class="actions">
+    <a href="/laptop" class="btn">Kembali</a>
+    <button class="btn danger" onclick="openHapusModal()">Hapus</button>
+
+    <div id="hapusModal" class="modal">
+      <div class="modal-content">
+        <h3>Hapus Data?</h3>
+        <div class="modal-actions">
+          <button onclick="closeHapusModal()" class="btn-green">Batal</button>
+          <form action="/laptop/detail/delete/<%= pmc.id %>" method="POST" style="display:inline;">
+            <button type="submit" class="btn-red">Ya, Hapus</button>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <a href="/laptop/detail/edit/<%= pmc.id %>" class="btn primary">Edit Perangkat & PMC</a>
   </div>
 
- <div class="actions">
-  <a href="/laptop" class="btn">Kembali</a>
-
-  <button class="btn danger" onclick="openHapusModal()">Hapus</button>
-
-<!-- Modal Pop-up -->
-<div id="hapusModal" class="modal">
-  <div class="modal-content">
-    <h3>Hapus Data?</h3>
-    <div class="modal-actions">
-      <button onclick="closeHapusModal()" class="btn-red">Kembali</button>
-      <form action="/laptop/detail/delete/<%= pmc.id %>" method="POST" style="display:inline;">
-        <button type="submit" class="btn-green">Lanjutkan</button>
-      </form>
-    </div>
-  </div>
-</div>
-
-
-  <a href="/laptop/detail/edit/<%= pmc.id %>" class="btn primary">
-    Edit Perangkat & PMC
-  </a>
-</div>
-
-
-
-<script>
-  function openHapusModal() {
-    document.getElementById('hapusModal').style.display = 'flex';
-  }
-
-  function closeHapusModal() {
-    document.getElementById('hapusModal').style.display = 'none';
-  }
-</script>
-
-
+  <script>
+    function openHapusModal() { document.getElementById('hapusModal').style.display = 'flex'; }
+    function closeHapusModal() { document.getElementById('hapusModal').style.display = 'none'; }
+    window.onclick = function(e) { if(e.target == document.getElementById('hapusModal')) closeHapusModal(); }
+  </script>
 </main>
-</div>
