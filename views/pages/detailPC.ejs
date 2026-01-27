@@ -1,10 +1,7 @@
-
-
 <main class="main">
-<div class="page-header">
+  <div class="page-header">
     <div class="page-title">Detail Perangkat</div>
-</div>
-  
+  </div>
 
   <div class="card">
     <div class="grid">
@@ -30,36 +27,38 @@
     </div>
 
     <div class="pmc-row">
-      <span>Status PMC:</span>
-      <span class="badge done"><%= pmc.status_pmc %> ✓</span>
-    </div>
+  <span>Status PMC:</span>
+  <span class="badge <%= pmc.status_pmc.toLowerCase() %>">
+    <%= pmc.status_pmc %> 
+    <%= pmc.status_pmc === 'Done' ? '✓' : '' %>
+  </span>
+ 
+</div>
   </div>
 
- <div class="actions">
-  <a href="/pc" class="btn">Kembali</a>
+  <div class="actions">
+    <a href="/pc" class="btn">Kembali</a>
 
-  <button class="btn danger" onclick="openHapusModal()">Hapus</button>
+    <button class="btn danger" onclick="openHapusModal()">Hapus</button>
 
-<!-- Modal Pop-up -->
-<div id="hapusModal" class="modal">
-  <div class="modal-content">
-    <h3>Hapus Data?</h3>
-    <div class="modal-actions">
-      <button onclick="closeHapusModal()" class="btn-red">Kembali</button>
-      <form action="/pc/detail/delete/<%= pmc.id %>" method="POST" style="display:inline;">
-        <button type="submit" class="btn-green">Lanjutkan</button>
-      </form>
+    <div id="hapusModal" class="modal">
+      <div class="modal-content">
+        <h3>Hapus Data?</h3>
+        <p>Data dengan ID <%= pmc.id %> akan dihapus permanen.</p>
+        <div class="modal-actions">
+          <button onclick="closeHapusModal()" class="btn-red">Batal</button>
+          <form action="/pc/detail/delete/<%= pmc.id %>" method="POST" style="display:inline;">
+            <button type="submit" class="btn-green">Lanjutkan Hapus</button>
+          </form>
+        </div>
+      </div>
     </div>
+
+    <a href="/pc/detail/edit/<%= pmc.id %>" class="btn primary">
+      Edit Perangkat & PMC
+    </a>
   </div>
-</div>
-
-
-  <a href="/pc/detail/edit/<%= pmc.id %>" class="btn primary">
-    Edit Perangkat & PMC
-  </a>
-</div>
-
-
+</main>
 
 <script>
   function openHapusModal() {
@@ -69,8 +68,12 @@
   function closeHapusModal() {
     document.getElementById('hapusModal').style.display = 'none';
   }
+
+  // Menutup modal jika user klik di luar kotak putih
+  window.onclick = function(event) {
+    const modal = document.getElementById('hapusModal');
+    if (event.target == modal) {
+      closeHapusModal();
+    }
+  }
 </script>
-
-
-</main>
-</div>

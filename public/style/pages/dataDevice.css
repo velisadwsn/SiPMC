@@ -1,4 +1,3 @@
-
 /* ================= MAIN CONTENT ================= */
 .main {
   flex: 1;
@@ -6,34 +5,49 @@
   overflow-y: auto;
   background: #e6efff;
 }
-/* ================= PAGE HEADER ================= */
+
+/* ================= PAGE HEADER (LAYOUT GROUPING) ================= */
 .page-header {
-  display: flex;
-  flex-direction: column; /* ini kuncinya */
-  align-items: flex-start;
-  gap: 15px; /* jarak judul ke filter */
+  display: grid;
+  /* Kolom 1: Mengambil sisa ruang (1fr) */
+  /* Kolom 2: Tombol Tambah (auto) */
+  /* Kolom 3: Filter Area (auto) */
+  grid-template-columns: 1fr auto auto; 
+  gap: 15px;
   margin-bottom: 30px;
+  align-items: center;
 }
 
-
-/* TITLE PC */
+/* TITLE PC - Mengambil seluruh baris pertama */
 .page-title {
+  grid-column: 1 / -1; 
   background: #b7c4d8;
   padding: 18px 35px;
   font-size: 34px;
   font-weight: bold;
   border-radius: 10px;
   color: #41546f;
+  width: fit-content;
+  margin-bottom: 5px; /* Jarak tambahan ke baris bawah */
 }
 
+/* CONTAINER TOMBOL TAMBAH - Pindah ke baris kedua, kolom kedua */
 .page-actions {
-  margin-left: auto;
+  grid-column: 2;
   display: flex;
-  align-items: center;   /* INI KUNCI */
-  gap: 15px;
+  align-items: center;
 }
 
-/* BUTTON TAMBAH DATA */
+/* FILTER AREA - Baris kedua, kolom ketiga (Paling kanan) */
+.filter-area {
+  grid-column: 3;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+/* ================= BENTUK ELEMEN (TETAP SAMA) ================= */
+
 .btn-add {
   background: #0c2b57;
   color: white;
@@ -42,17 +56,10 @@
   text-decoration: none;
   font-weight: 600;
   white-space: nowrap;
-  
 }
 
 .btn-add:hover {
-  background: #081d3a;
-}
-/* ================= ACTIONS ================= */
-.filter-area {
-  align-self: flex-end;
-  display: flex;
-  gap: 8px;
+  background: #154b96;
 }
 
 .filter-area select {
@@ -60,7 +67,6 @@
   border-radius: 6px;
   font-size: 16px;
 }
-
 
 .search-box {
   position: relative;
@@ -80,14 +86,13 @@
   transform: translateY(-50%);
 }
 
-/* ================= PC LIST ================= */
+/* ================= PC LIST & CARD ================= */
 .pc-list {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 25px;
 }
 
-/* ================= PC CARD ================= */
 .pc-card {
   background: #b7c4d8;
   padding: 22px 25px;
@@ -115,7 +120,6 @@
   font-size: 15px;
 }
 
-/* ================= BUTTON ================= */
 .btn-detail {
   background: #0c2b57;
   color: white;
@@ -126,25 +130,26 @@
 }
 
 .btn-detail:hover {
-  background: #081d3a;
+  background: #154b96;
 }
-
 
 /* ================= RESPONSIVE ================= */
 @media (max-width: 900px) {
+  .page-header {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .page-actions, .filter-area {
+    width: 100%;
+  }
+
+  .filter-area {
+    justify-content: space-between;
+  }
+
   .pc-list {
     grid-template-columns: 1fr;
   }
 }
-
-@media (max-width: 900px) {
-  .sidebar {
-    width: 190px;
-    min-width: 190px;
-  }
-
-  .main {
-    padding: 25px;
-  }
-}
-

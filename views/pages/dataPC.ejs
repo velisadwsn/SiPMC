@@ -1,39 +1,50 @@
-  <main class="main">
-    <!-- HEADER HALAMAN -->
-    <div class="page-header">
-      <div class="page-title">Data PC</div>
-      <div class="page-actions">
+<main class="main">
+  <div class="page-header">
+    <div class="page-title">Data PC</div>
+
+    <div class="page-actions">
       <a href="/pc/tambah" class="btn btn-add">+ Tambah Data</a>
-      
-      <div class="filter-area">
-    <select>
-      <option>Januari 2024</option>
-      <option>Februari2024</option>
-      <option>Maret 2024</option>
-    </select>
+    </div>
 
-        <div class="search-box">
-          <input type="text" placeholder="Cari">
-    
+    <form method="GET" action="/pc" class="filter-area">
+      <select name="bulan" onchange="this.form.submit()">
+        <option value="Januari" <%= bulanAktif === 'Januari' ? 'selected' : '' %>>Januari</option>
+        <option value="Februari" <%= bulanAktif === 'Februari' ? 'selected' : '' %>>Februari</option>
+        <option value="Maret" <%= bulanAktif === 'Maret' ? 'selected' : '' %>>Maret</option>
+        <option value="April" <%= bulanAktif === 'April' ? 'selected' : '' %>>April</option>
+        <option value="Mei" <%= bulanAktif === 'Mei' ? 'selected' : '' %>>Mei</option>
+        <option value="Juni" <%= bulanAktif === 'Juni' ? 'selected' : '' %>>Juni</option>
+        <option value="Juli" <%= bulanAktif === 'Juli' ? 'selected' : '' %>>Juli</option>
+        <option value="Agustus" <%= bulanAktif === 'Agustus' ? 'selected' : '' %>>Agustus</option>
+        <option value="September" <%= bulanAktif === 'September' ? 'selected' : '' %>>September</option>
+        <option value="Oktober" <%= bulanAktif === 'Oktober' ? 'selected' : '' %>>Oktober</option>
+        <option value="November" <%= bulanAktif === 'November' ? 'selected' : '' %>>November</option>
+        <option value="Desember" <%= bulanAktif === 'Desember' ? 'selected' : '' %>>Desember</option>
+      </select>
+
+     <div class="search-box">
+    <input type="text" name="keyword" placeholder="Cari" value="<%= keyword %>">
+    <button type="submit" style="display: none;"></button> </div>
+    </form>
+  </div>
+
+  <!-- LIST PC -->
+  <div class="pc-list">
+    <% pcs.forEach(pc => { %>
+      <div class="pc-card">
+        <div class="pc-code"><%= pc.no %></div>
+
+        <div class="pc-info">
+          <strong><%= pc.model %></strong>
+          <span><%= pc.serial_number %></span>
         </div>
+
+        <a href="/pc/detail/<%= pc.device_id %>" class="btn-detail">Detail</a>
       </div>
-    </div>
-    </div>
-    <!-- LIST PC -->
-    <div class="pc-list">
-      <% for(let i = 0; i < 8; i++) { %>
-        <div class="pc-card">
-          <div class="pc-code">0307</div>
+    <% }) %>
 
-          <div class="pc-info">
-            <strong>Optiplex SFF 7020</strong>
-            <span>7PD8P54</span>
-          </div>
-
-          <a href="/pc/detail" class="btn-detail">Detail</a>
-        </div>
-      <% } %>
-    </div>
-
-  </main>
-
+    <% if (pcs.length === 0) { %>
+      <p>Tidak ada PC untuk bulan <strong><%= bulanAktif %></strong></p>
+    <% } %>
+  </div>
+</main>

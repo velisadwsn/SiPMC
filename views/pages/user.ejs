@@ -1,52 +1,49 @@
 <main class="main">
-    <div class="page-header">
-      <div class="page-title">Profil User</div>
-  <div class="user-container">
-
-    <!-- KIRI: AVATAR -->
-    <div class="user-avatar">
-      <img src="/images/Pinterest.jpg" alt="Avatar" class="avatar-preview">
-
-      <form action="/user/avatar" method="POST" enctype="multipart/form-data">
-        <label class="upload-btn">
-          Ganti Foto
-          <input type="file" name="avatar" hidden>
-        </label>
-      </form>
-    </div>
-
-    <!-- KANAN: FORM USER -->
-    <div class="user-form">
-
-      <form action="/user/update" method="POST">
-        <div class="form-group">
-          <label>Nama</label>
-          <input type="text" name="nama" value="Admin Satu">
-        </div>
-
-        <div class="form-group">
-          <label>Unit</label>
-          <input type="text" name="unit" value="ICT Unit">
-        </div>
-
-        <div class="form-group">
-          <label>Jabatan</label>
-          <input type="text" name="jabatan" value="Administrator">
-        </div>
-
-        <div class="form-group">
-          <label>Tanda Tangan</label>
-          <input type="file" name="ttd">
-          <small>Dipakai otomatis saat unduh laporan</small>
-          
-        </div>
-        <div class="form-group">
-          <button class="btn primary">Simpan</button>
-        </div>
-        
-      </form>
-    </div>
-
+  <div class="page-header">
+    <div class="page-title">Profil User</div>
   </div>
+
+  <div class="user-container">
+    <div class="user-left-section">
+      <div class="user-avatar-card">
+        <img src="<%= profile.avatar || '/images/avatar/default.jpg' %>" class="avatar-preview">
+        <form action="/user/avatar" method="POST" enctype="multipart/form-data" id="avatarForm">
+          <label class="upload-btn">
+            Ganti Foto
+            <input type="file" name="avatar" hidden onchange="document.getElementById('avatarForm').submit()">
+          </label>
+        </form>
+      </div>
+      <a href="/logout" class="btn-logout-link">Keluar Aplikasi</a>
     </div>
+
+    <div class="user-form-card">
+      <form action="/user/update" method="POST" enctype="multipart/form-data">
+        <div class="form-group">
+          <label>Nama Lengkap</label>
+          <input type="text" name="nama" value="<%= profile.fullname %>" required>
+        </div>
+
+        <div class="form-group">
+          <label>Unit Kerja</label>
+          <input type="text" name="unit" value="<%= profile.unit %>" required>
+        </div>
+
+        <div class="form-group">
+          <label>Update Tanda Tangan Digital</label>
+          <% if (profile.ttd) { %>
+            <div class="current-ttd">
+              <img src="/images/ttd/<%= profile.ttd %>" style="height: 60px; border: 1px solid #ddd;">
+            </div>
+          <% } %>
+          <input type="file" name="ttd">
+          <small>Format: PNG transparan (Dipakai otomatis di laporan)</small>
+        </div>
+
+        <div class="form-actions" style="margin-top: 20px;">
+          <button type="submit" class="btn primary">Simpan Perubahan</button>
+        </div>
+      </form>
+    </div>
+  </div>
 </main>

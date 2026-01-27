@@ -117,12 +117,23 @@
   border: 1px solid #ccc;
   background: white;
   cursor: pointer;
+  text-decoration: none;
+  color: #000;
+}
+
+.btn:hover {
+  background: #b4cbf9;
+  color: white;
 }
 
 .btn.primary {
   background: #1e88e5;
   color: white;
   border: none;
+}
+
+.btn.primary:hover {
+  background: #173e8c;
 }
 
 /* ================= RESPONSIVE ================= */

@@ -1,0 +1,73 @@
+<main class="main">
+  <div class="page-header">
+    <div class="page-title">Tambah Perangkat Baru</div>
+  </div>
+
+  <div class="card">
+    <form action="/pc/tambah" method="POST">
+      <input type="hidden" name="device_type" value="PC">
+
+      <div class="form-grid-2col">
+        <div class="col">
+          <div class="form-row">
+            <label>No </label>
+            <input type="text" name="no"  required>
+          </div>
+          <div class="form-row">
+            <label>Model</label>
+            <input type="text" name="model"  required>
+          </div>
+          <div class="form-row">
+            <label>Serial Number</label>
+            <input type="text" name="serial" required>
+          </div>
+          <div class="form-row">
+            <label>Site</label>
+            <input type="text" name="site">
+          </div>
+        </div>
+
+        <div class="col">
+          <div class="form-row">
+            <label>Employee No</label>
+            <input type="text" name="employee_no">
+          </div>
+          <div class="form-row">
+            <label>Checked Out</label>
+            <input type="text" name="checked_out">
+          </div>
+          <div class="form-row">
+            <label>Hostname</label>
+            <input type="text" name="hostname_sp">
+          </div>
+          <div class="form-row">
+            <label>Lokasi</label>
+            <input type="text" name="lokasi">
+          </div>
+        </div>
+      </div>
+
+      <div class="card pmc-card">
+        <h3>Preventive Maintenance Check (PMC)</h3>
+        <div class="form-grid">
+          <div class="form-row">
+            <label>Jadwal PMC</label>
+            <input type="text" name="jadwal_pmc" placeholder="Contoh: Januari">
+          </div>
+          <div class="form-row">
+            <label>Status PMC</label>
+            <select name="pmc_status">
+              <option value="Pending">Pending</option>
+              <option value="Done">Done</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="actions">
+        <a href="/pc" class="btn">Batal</a>
+        <button type="submit" class="btn primary">Simpan Perangkat</button>
+      </div>
+    </form>
+  </div>
+</main>

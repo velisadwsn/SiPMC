@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <title>Checklist PMC PC - <%= data.serial_number %></title>
+    <style>
+        /* Menggunakan font campuran sesuai template asli */
+        body { font-family: 'Courier New', Courier, monospace; background: #525659; padding: 20px; margin: 0; }
+        .paper { background: white; width: 210mm; min-height: 297mm; padding: 10mm; margin: auto; box-shadow: 0 0 10px rgba(0,0,0,0.5); font-size: 10px; color: #000; }
+        
+        /* Bingkai Luar Utama */
+        .container-table { width: 100%; border-collapse: collapse; border: 1.5px solid black; }
+        .container-table > tbody > tr > td { padding: 10px; border: none; }
+        
+        .header-section { margin-bottom: 10px; }
+        .logo-sisi { height: 80px; } .logo-sig { height: 80px; }
+        .config-outer { border: 1.2px solid black; padding: 12px; margin-bottom: 10px; font-family: 'Courier New', Courier, monospace; }
+
+        .data-grid { width: 90%; border-collapse: collapse; text-align: center; margin-left: auto; margin-right: auto; }
+        .val-cell { border-bottom: 1px solid black; height: 28px; font-size: 11px; }
+        .lab-cell { font-size: 9px; font-style: italic; padding-top: 2px; padding-bottom: 10px; font-family: 'Courier New', sans-serif; }
+
+        .content-table { width: 100%; border-collapse: collapse; font-family: 'Courier New', Courier, monospace;}
+        .content-table th, .content-table td { border-top: 1px solid black; border-bottom: 1px solid black; padding: 4px; }
+        .no-content-table { border-top: none !important; border-bottom: none !important; }
+        .bg-gray { background-color: #d9d9d9; font-weight: bold; text-align: center; font-family: 'Courier New', sans-serif; }
+        .bg-gray-l { background-color: #f2f2f2;}
+    
+        .space {margin-bottom: 20px;}
+        .v-line { border-right: 1px solid black; }
+        .v-line-l { border-left: 1px solid black; }
+        .no-border-r { border-right: none !important; }
+        .no-border-l { border-left: none !important; }
+        .blue-last-line { border-right: 1px solid black !important; }
+
+        .notes-box { border: 1px solid black; padding: 8px; min-height: 100px; font-size: 9px; margin-top: 5px; margin-left: 40px; margin-right: 28px; font-family: 'Courier New', Courier, monospace; }
+        .sig-line { width: 90%; border-bottom: 1px solid black; margin: 40px auto 4px; }
+        
+        .print-btn { position: fixed; top: 20px; right: 20px; padding: 10px 15px; background: #0c2b57; color: white; border: none; cursor: pointer; font-weight: bold; z-index: 1000; }
+        @media print { .print-btn { display: none; } body { background: white; padding: 0; } .paper { box-shadow: none; margin: 0; } }
+        [contenteditable="true"]:hover { background: #fffde7; outline: 1px dashed #ccc; }
+        
+        /* Footer Table Alignment */
+        .footer-table { width: 100%; border-collapse: collapse; font-family: 'Courier New', sans-serif; }
+        .footer-table td { vertical-align: top; padding-top: 10px; }
+        .text-left { text-align: left; }
+        .text-center { text-align: center; }
+    </style>
+</head>
+<body>
+
+<% 
+const currentDate = new Date().toLocaleDateString('id-ID', {weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }); 
+const dateSimple = new Date().toLocaleDateString('id-ID', { day: '2-digit', month: '2-digit', year: 'numeric' });
+%>
+<button class="print-btn" onclick="window.print()">CETAK PDF</button>
+
+<div class="paper">
+    <div class="header-section">
+        <table width="100%">
+            <tr>
+                <td width="30%"><img src="/images/sisi.png" class="logo-sisi"></td>
+                <td align="center">
+                    <h3 style="margin:0; font-size:14px;">PT. Sinergi Informatika Semen Indonesia</h3>
+                    <h3 style="margin:0; font-size:14px;">Digital Service - Ops & Dev Infra</h3>
+                </td>
+                <td width="30%" align="right"><img src="/images/sig.png" class="logo-sig"></td>
+            </tr>
+        </table>
+        <div style="border:1.2px solid black; text-align:center; padding:3px; margin-top:8px; font-weight:bold; color:#5c5c5c;">CHECKLIST PREVENTIVE MAINTENANCE</div>
+    </div>
+
+    <div class="config-outer">
+        <table width="100%" style="margin-bottom:15px; margin-left: auto; margin-right: auto;">
+            <tr>
+                <td width="36%"><span style="background:#e0e0e0; padding:3px 8px; font-weight:bold; font-family: 'Courier New', sans-serif; margin-left: 30px;">Configurations Items</span></td>
+                <td width="25%" align="center" style="border:1px solid black; color:#b8860b;">Date</td>
+                <td width="35%" style="border:1px solid black; padding-left:10px;" contenteditable="true"><%= currentDate %></td>
+                <td></td>
+            </tr>
+        </table>
+        <table class="data-grid">
+            <tr>
+                <td class="val-cell" width="30%">PC</td>
+                <td width="5%"></td>
+                <td class="val-cell" width="30%" contenteditable="true">SISI-204-PCS-111</td>
+                <td width="5%"></td>
+                <td class="val-cell" width="30%">Padang</td>
+            </tr>
+            <tr>
+                <td class="lab-cell">Device</td><td></td>
+                <td class="lab-cell">ID Tagging Asset</td><td></td>
+                <td class="lab-cell">OpCo</td>
+            </tr>
+            <tr>
+                <td class="val-cell"><%= data.model %></td><td></td>
+                <td class="val-cell"><%= data.serial_number %></td><td></td>
+                <td class="val-cell" contenteditable="true">nama unit</td>
+            </tr>
+            <tr>
+                <td class="lab-cell">Merk/ Type</td><td></td>
+                <td class="lab-cell">Serial Number</td><td></td>
+                <td class="lab-cell">Location</td>
+            </tr>
+        </table>
+    </div>
+
+    <table class="container-table">
+        <tr>
+            <td>
+                <table class="content-table">
+                    <tr class="bg-gray">
+                        <td rowspan="2" class="v-line-l v-line" width="5%">Item</td>
+                        <td rowspan="2" class="v-line" width="30%">Description</td>
+                        <td colspan="2" class="v-line">Condition</td>
+                        <td rowspan="2" class="v-line no-border-r">Information</td>
+                        <td rowspan="2" class="no-border-l v-line"></td>
+                    </tr>
+                    <tr class="bg-gray" style="font-size:8px;">
+                        <td class="v-line">Normal</td>
+                        <td class="v-line">Error</td>
+                    </tr>
+
+                    <tr class="space">
+                        <td class="no-content-table no-border-r">1.</td>
+                        <td colspan="4" class="no-border-r"><b>Check Device Functions</b></td>
+                    </tr>
+                    <% const hw = [
+                        {n:'Monitor / LCD', d:'Dell'}, {n:'RAM', d:'16 GB'}, {n:'Hardisk', d:'SSD 512 GB'},
+                        {n:'Power Supply/Adaptor', d:''}, {n:'DVD/CD ROM', d:'', e:true},
+                        {n:'Keyboard', d:'Dell'}, {n:'Mouse', d:'Dell'}, {n:'Clean Device', d:''}
+                    ]; hw.forEach(item => { %>
+                    <tr>
+                        <td class="no-content-table v-line no-border-l"></td>
+                        <td class="bg-gray-l v-line no-border-l" style="font-style:italic;"><%= item.n %></td>
+                        <td class="center v-line" contenteditable="true"><%= item.e ? '' : '✓' %></td>
+                        <td class="center blue-last-line" contenteditable="true"><%= item.e ? '✓' : '' %></td>
+                        <td class="v-line" contenteditable="true"><%= item.d %></td>
+                      
+                    </tr>
+                    <% }) %>
+
+                    <tr>
+                        <td class="no-content-table no-border-r">2.</td>
+                        <td colspan="4" class="no-border-r"><b>Standard Software</b></td>
+                    </tr>
+                    <% ['Operating System', 'Antivirus', 'Microsoft Office'].forEach(sw => { %>
+                    <tr>
+                        <td class="no-content-table v-line no-border-l"></td>
+                        <td class="bg-gray-l v-line no-border-l"><%= sw %></td>
+                        <td class="no-border-r" contenteditable="true">OK</td>
+                        <td colspan="2" class="v-line"></td>
+                        <td class="no-content-table"></td>
+                        
+                        
+                    </tr>
+                    <% }) %>
+
+                    <tr>
+                        <td class="no-content-table no-border-r">3.</td>
+                        <td colspan="4" class="no-border-r"><b>Additional Software</b></td>
+                    </tr>
+                    <% for(let i=1; i<=5; i++){ %>
+                    <tr>
+                        <td class="no-content-table v-line no-border-l"></td>
+                        <td colspan="2" class="v-line no-border-l" style="font-style:italic;"><%= i %>.</td>
+                        <td class="no-border-l" style="font-style:italic;"><%= i+5 %>.</td> 
+                        <td class="v-line"></td>
+                        <td class="no-content-table"></td>
+                    
+                        
+                    </tr>
+                    <% } %>
+                </table>
+
+                <div style="font-weight:bold; margin-top:10px; margin-left:40px ; font-family: Courier New;">Notes</div>
+                <div class="notes-box" contenteditable="true">
+                    Hostname : <%= data.hostname %><br><br>
+                    IP Address : 192.168.16.62<br><br>
+                    MAC Address : 10:98:19:1E:CB:C1
+                </div>
+            </td>
+        </tr>
+
+        <tr style="border-top: 1.5px solid black;">
+            <td style="padding: 10px;">
+                <table class="footer-table">
+                    <tr>
+                        
+                        <td width="33%">
+                            <div style="text-align: left; margin-bottom: 20px;"></div>
+                            <div class="text-align: left;">Person In Charge, SIG</div>
+                        </td>
+                        <td width="33%">
+                            <div style="text-align: center; margin-bottom: 20px;"></div>
+                            <div class="text-center">PIC</div>
+                        </td>
+                        <td width="33%">
+                            <div style="text-align: left; margin-bottom: 10px;">Padang, <%= dateSimple %></div>
+                            <div class="text-align: left">Officer Preventive Maintenance</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="text-center" style="padding-top:60px;">
+                            <div class="sig-line"></div>
+                            <span contenteditable="true">Roni Mahmudi</span>
+                        </td>
+                        <td class="text-center" style="padding-top:60px;">
+                            <div class="sig-line"></div>
+                            <%= data.checked_out || 'nama employee' %>
+                        </td>
+                        <td class="text-center">
+                            <div style="height:50px;">
+                                <% if (data.ttd) { %><img src="/images/ttd/<%= data.ttd %>" style="max-height:100px;"><% } %>
+                            </div>
+                            <div class="sig-line"></div>
+                            <%= data.pemeriksa || data.fullname %>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+</div>
+
+</body>
+</html>

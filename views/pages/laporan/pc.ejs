@@ -1,55 +1,69 @@
 <main class="main">
-<div class="page-header">
-  <div class="page-title">Laporan PMC PC</div>
+  <div class="page-header">
+    <div class="page-title">Laporan PMC PC</div>
 
-  <div class="filter-area">
-    <select>
-      <option>Januari 2024</option>
-      <option>Februari 2024</option>
-      <option>Maret 2024</option>
-    </select>
+    <div class="filter-area">
+      <form action="/laporan/pc" method="GET" style="display: flex; gap: 10px; align-items: center;">
+        
+        <select name="bulan" onchange="this.form.submit()" style="width: 150px;">
+          <% 
+            const daftarBulan = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+            daftarBulan.forEach(b => { 
+          %>
+            <option value="<%= b %>" <%= bulanAktif === b ? 'selected' : '' %>><%= b %></option>
+          <% }) %>
+        </select>
 
-<div class="search-box">
-          <input type="text" placeholder="Cari">
-    
+        <select name="tahun" onchange="this.form.submit()" style="width: 100px;">
+          <% 
+            const tahunSekarang = new Date().getFullYear();
+            for(let i = tahunSekarang; i >= tahunSekarang - 3; i--) { 
+          %>
+            <option value="<%= i %>" <%= tahunAktif == i ? 'selected' : '' %>><%= i %></option>
+          <% } %>
+        </select>
+
+        <div class="search-box">
+          <input type="text" name="keyword" placeholder="Cari" value="<%= keyword %>">
         </div>
+      </form>
+    </div>
   </div>
-</div>
 
-<table class="laporan-table">
-  <thead>
-   <tr>
-      <th>No</th>
-      <th>Model</th>
-      <th>Serial Number</th>
-      <th>Bulan</th>
-      <th>Tahun</th>
-      <th>Pemeriksa</th>
-      <th>Aksi</th>
-    </tr>
-  </thead>
-  <tbody>
+  <table class="laporan-table">
+    <thead>
       <tr>
-      <td>0307</td>
-      <td>Optiplex SFF 7020</td>
-      <td>7PD8P54</td>
-      <td>Januari</td>
-      <td>2024</td>
-      <td>Admin Satu</td>
-      <td>
-  <button class="btn primary">Cetak PDF</button></td>
-    </tr>
-      <tr>
-      <td>0313</td>
-      <td>Optiplex SFF 7020</td>
-      <td>8JD8P54</td>
-      <td>Januari</td>
-      <td>2024</td>
-      <td>Admin Dua</td>
-      <td>
-  <button class="btn primary">Cetak PDF</button></td>
-    </tr>
-  </tbody>
-</table>
-
+        <th>No</th>
+        <th>Model PC</th>
+        <th>Serial Number</th>
+        <th>Bulan</th>
+        <th>Tahun</th>
+        <th>Pemeriksa</th>
+        <th>Aksi</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% if (laporan.length > 0) { %>
+        <% laporan.forEach(item => { %>
+          <tr>
+            <td><%= item.no %></td>
+            <td><%= item.model %></td>
+            <td><%= item.serial_number %></td>
+            <td><%= item.bulan %></td>
+            <td><%= item.tahun %></td>
+            <td><%= item.pemeriksa || 'Tidak Ada Nama' %></td>
+            <td>
+              <a href="/laporan/previewpc/<%= item.device_id %>" target="_blank" class="btn primary" style="text-decoration: none; font-size: 12px;">Cetak PDF</a>
+            </td>
+          </tr>
+        <% }) %>
+      <% } else { %>
+        <tr>
+          <td colspan="7" style="text-align: center; padding: 30px; color: #888;">
+            Data tidak ditemukan untuk periode <%= bulanAktif %> <%= tahunAktif %>.
+          </td>
+        </tr>
+      <% } %>
+    </tbody>
+  </table>
 </main>

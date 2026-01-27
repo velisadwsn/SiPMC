@@ -1,14 +1,13 @@
 <link rel="stylesheet" href="/style/sidebar.css">
 <aside class="sidebar">
-  <a href="/user" class="profile">
-  <img src="<%= user.avatar %>" class="avatar">
+  <a href="/user" class="profile <%= active === 'user' ? 'active' : '' %>">
+    <img src="<%= user.avatar || '/images/avatar/default.jpg' %>" class="avatar">
 
-  <div>
-    <strong>Admin Satu</strong><br>
-    <small>ICT Unit</small>
-  </div>
-</a>
-
+    <div>
+      <strong><%= user.nama %></strong><br>
+      <small><%= user.unit %></small>
+    </div>
+  </a>
 
   <ul class="menu">
     <li class="<%= active === 'dashboard' ? 'active' : '' %>">
@@ -27,10 +26,7 @@
       <a href="/riwayat">Riwayat</a>
     </li>
 
-     <!-- LAPORAN -->
     <li class="has-submenu <%= active === 'laporan' ? 'open' : '' %>">
-
-      <!-- checkbox (hidden total) -->
       <input type="checkbox" id="laporan-toggle"
         <%= active === 'laporan' ? 'checked' : '' %>>
 
@@ -46,8 +42,6 @@
           <a href="/laporan/pc">PC</a>
         </li>
       </ul>
-
     </li>
-
   </ul>
 </aside>

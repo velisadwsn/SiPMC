@@ -86,12 +86,28 @@
   font-weight: 600;
 }
 
+
+.badge {
+  padding: 6px 15px;
+  border-radius: 50px;
+  font-weight: 700;
+  font-size: 13px;
+  text-transform: uppercase;
+  display: inline-block;
+}
+
+
+.badge.pending {
+  background-color: #fff3cd; 
+  color: #856404;
+  border: 1px solid #ffeeba;
+}
+
+
 .badge.done {
-  background: #1db954;
-  color: white;
-  padding: 4px 10px;
-  border-radius: 4px;
-  font-size: 15px;
+  background-color: #d4edda; 
+  color: #155724;
+  border: 1px solid #c3e6cb;
 }
 
 /* BUTTON */
@@ -109,18 +125,31 @@
   border: 1px solid #ccc;
   background: white;
   cursor: pointer;
+  color: #000;
+  text-decoration: none;
 }
-
+.btn:hover {
+  background: #b4cbf9;
+  color: white;
+}
 .btn.primary {
   background: #1e88e5;
   color: white;
   border: none;
+  text-decoration: none;
+}
+
+.btn.primary:hover {
+  background: #173e8c;
 }
 
 .btn.danger {
   background: #e53935;
   color: white;
   border: none;
+}
+.btn.danger:hover {
+  background: #871312;
 }
 
 @media (max-width: 900px) {
