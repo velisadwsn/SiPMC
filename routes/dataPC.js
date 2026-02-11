@@ -45,12 +45,11 @@ router.get('/tambah', (req, res) => {
 
 
 router.post('/tambah', (req, res) => {
-  const { model, serial_number, site, lokasi, employee_no, checked_out, no, jadwal_PMC, status_pmc } = req.body;
+  const { no, model, serial_number, site, lokasi, employee_no, checked_out, hostname, jadwal_PMC, status_pmc } = req.body;
   const idTeknisi = req.session.user.id; // Ambil ID User
-  
-  const sqlInsert = "INSERT INTO devices (device_type, model, serial_number, site, lokasi, employee_no, checked_out, no, jadwal_PMC) VALUES ('PC', ?, ?, ?, ?, ?, ?, ?, ?)";
-  const values = [model, serial_number, site, lokasi, employee_no, checked_out, no, jadwal_PMC];
 
+  const sqlInsert = "INSERT INTO devices (device_type, no, model, serial_number, site, lokasi, employee_no, checked_out, hostname, jadwal_PMC) VALUES ('PC', ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+  const values = [no, model, serial_number, site, lokasi, employee_no, checked_out, hostname, jadwal_PMC];
   db.query(sqlInsert, values, (err, result) => {
     if (err) return res.status(500).send(err.message);
     
@@ -89,9 +88,9 @@ router.get('/detail/:id', (req, res) => {
         }
 
         const pmcData = {
-          id: data.device_id, model: data.model, employee_no: data.employee_no || '-',
+          id: data.device_id, no: data.no, model: data.model, employee_no: data.employee_no || '-',
           serial: data.serial_number, checked_out: data.checked_out || '-',
-          site: data.site || '-', hostname: data.no, lokasi: data.lokasi || '-',
+          site: data.site || '-', hostname: data.hostname, lokasi: data.lokasi || '-',
           
           // Kirim dua versi biar aman di EJS
           jadwal_PMC: data.jadwal_PMC, 

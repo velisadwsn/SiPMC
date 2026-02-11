@@ -40,20 +40,25 @@ router.get('/tambah', (req, res) => {
 });
 
 router.post('/tambah', (req, res) => {
-  const { model, serial_number, cocd, lokasi, employee_no, checked_out, no, jadwal_PMC, status_pmc } = req.body;
-  // AMBIL ID TEKNISI DARI SESSION
+  // Ambil data dari body (Pastikan di EJS name="no" dan name="hostname")
+  const { no, model, serial_number, cocd, lokasi, employee_no, checked_out, hostname, jadwal_PMC, status_pmc } = req.body;
   const idTeknisi = req.session.user.id; 
   
-  const sqlInsert = "INSERT INTO devices (device_type, model, serial_number, cocd, lokasi, employee_no, checked_out, no, jadwal_PMC) VALUES ('Laptop', ?, ?, ?, ?, ?, ?, ?, ?)";
-  const values = [model, serial_number, cocd, lokasi, employee_no, checked_out, no, jadwal_PMC];
+  const sqlInsert = `
+    INSERT INTO devices 
+    (device_type, no, model, serial_number, cocd, lokasi, employee_no, checked_out, hostname, jadwal_PMC) 
+    VALUES ('Laptop', ?, ?, ?, ?, ?, ?, ?, ?, ?)
+  `;
+  
+  // Urutan values harus sama dengan urutan kolom di atas
+  const values = [no, model, serial_number, cocd, lokasi, employee_no, checked_out, hostname, jadwal_PMC];
 
   db.query(sqlInsert, values, (err, result) => {
-    if (err) return res.status(500).send(err.message);
+    if (err) return res.status(500).send("Gagal Tambah Device: " + err.message);
     
     const tahun = new Date().getFullYear();
-    const infoPerangkat = `${model} ${serial_number}`; 
+    const infoPerangkat = `${model} (${serial_number})`; 
     
-    // MASUKKAN checked_by KE HISTORY
     const sqlHist = `
         INSERT INTO histories 
         (device_id, tahun, status_PMC, tanggal_cek, action_type, info_backup, checked_by) 
@@ -86,9 +91,9 @@ router.get('/detail/:id', (req, res) => {
         }
 
         const pmcData = {
-          id: data.device_id, model: data.model, employee_no: data.employee_no || '-',
+          id: data.device_id, no: data.no, model: data.model, employee_no: data.employee_no || '-',
           serial: data.serial_number, checked_out: data.checked_out || '-',
-          cocd: data.cocd || '-', hostname: data.no, lokasi: data.lokasi || '-',
+          cocd: data.cocd || '-', hostname: data.hostname, lokasi: data.lokasi || '-',
           
           // Kirim dua versi biar aman di EJS
           jadwal_PMC: data.jadwal_PMC, 
@@ -134,14 +139,26 @@ router.get('/detail/edit/:id', (req, res) => {
 // ==================================================
 router.post('/detail/update/:id', (req, res) => {
   const id = req.params.id;
-  const idTeknisi = req.session.user.id; // AMBIL ID TEKNISI
-  const { no, model, serial_number, cocd, lokasi, employee_no, checked_out, jadwal_PMC, status_pmc } = req.body; 
+  const idTeknisi = req.session.user.id; // Pastikan session user sudah ada
+  
+  // 1. Ambil SEMUA data dari body sesuai dengan atribut 'name' di EJS
+  const { no, model, serial_number, cocd, lokasi, employee_no, checked_out, hostname, jadwal_PMC, status_pmc } = req.body; 
 
-  const sqlUpdateDevice = "UPDATE devices SET no=?, model=?, serial_number=?, cocd=?, lokasi=?, employee_no=?, checked_out=?, jadwal_PMC=? WHERE device_id=?";
-  const valuesDevice = [no, model, serial_number, cocd, lokasi, employee_no, checked_out, jadwal_PMC, id];
+  // 2. Perbaiki SQL Update: Pastikan 'no' dan 'hostname' masuk hitungan
+  const sqlUpdateDevice = `
+    UPDATE devices 
+    SET no=?, model=?, serial_number=?, cocd=?, lokasi=?, employee_no=?, checked_out=?, hostname=?, jadwal_PMC=? 
+    WHERE device_id=?
+  `;
+  
+  // 3. Urutan Array VALUES harus 100% sama dengan urutan tanda tanya (?) di atas
+  const valuesDevice = [no, model, serial_number, cocd, lokasi, employee_no, checked_out, hostname, jadwal_PMC, id];
 
   db.query(sqlUpdateDevice, valuesDevice, (err) => {
-    if (err) return res.status(500).send("Gagal Update Device: " + err.message);
+    if (err) {
+      console.error("Gagal Update Device:", err);
+      return res.status(500).send("Gagal Update Device: " + err.message);
+    }
 
     const tahun = new Date().getFullYear();
     const sqlCheck = "SELECT riwayat_id FROM histories WHERE device_id = ? AND tahun = ?";
@@ -150,7 +167,7 @@ router.post('/detail/update/:id', (req, res) => {
         if (errCheck) return res.redirect(`/laptop/detail/${id}`);
 
         if (resultCheck.length > 0) {
-            // UPDATE: Masukkan checked_by teknisi yang baru saja update
+            // A. UPDATE HISTORY: Masukkan ID Teknisi di checked_by
             const sqlUpdateHist = `
                 UPDATE histories 
                 SET status_PMC = ?, tanggal_cek = NOW(), action_type = 'Update', checked_by = ? 
@@ -162,8 +179,11 @@ router.post('/detail/update/:id', (req, res) => {
                 res.redirect(`/laptop/detail/${id}`);
             });
         } else {
-            // INSERT: Masukkan checked_by teknisi
-            const sqlInsertHist = "INSERT INTO histories (device_id, tahun, status_PMC, tanggal_cek, action_type, checked_by) VALUES (?, ?, ?, NOW(), 'Update', ?)";
+            // B. INSERT HISTORY BARU: Masukkan ID Teknisi di checked_by
+            const sqlInsertHist = `
+                INSERT INTO histories (device_id, tahun, status_PMC, tanggal_cek, action_type, checked_by) 
+                VALUES (?, ?, ?, NOW(), 'Update', ?)
+            `;
             
             db.query(sqlInsertHist, [id, tahun, status_pmc, idTeknisi], (errInsert) => {
                 if(errInsert) console.error("Insert History Error:", errInsert);
@@ -173,7 +193,6 @@ router.post('/detail/update/:id', (req, res) => {
     });
   });
 });
-
 // ==================================================
 // 6. DELETE (VERSI FIX: PAKE NULL)
 // ==================================================

@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
+  
   <meta charset="UTF-8">
   <title><%= title %></title>
 
@@ -12,6 +13,7 @@
   <% if (css) { %>
     <link rel="stylesheet" href="/style/pages/<%= css %>">
   <% } %>
+  
 </head>
 
 <body>
@@ -20,7 +22,7 @@
   <div class="layout">
     <%- include('../partials/sidebar') %>
 
-    <main class="main">
+    <main class="main page-wrapper">
       <%- body %>
     </main>
   </div>
