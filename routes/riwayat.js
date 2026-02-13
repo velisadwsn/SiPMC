@@ -10,7 +10,8 @@ router.get('/', (req, res) => {
             d.model,
             d.serial_number,
             d.no,
-            d.jadwal_PMC
+            d.jadwal_PMC,
+            d.device_type  /* <--- TAMBAHAN PENTING: Biar tau ini PC atau Laptop */
         FROM histories h
         LEFT JOIN devices d ON h.device_id = d.device_id
         ORDER BY h.tanggal_cek DESC

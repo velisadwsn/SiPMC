@@ -40,25 +40,32 @@ router.get('/tambah', (req, res) => {
 });
 
 router.post('/tambah', (req, res) => {
-  const { model, serial_number, cocd, lokasi, employee_no, checked_out, no, jadwal_PMC, status_pmc } = req.body;
+  // Ambil data dari body (Pastikan di EJS name="no" dan name="hostname")
+  const { no, model, serial_number, cocd, lokasi, employee_no, checked_out, hostname, jadwal_PMC, status_pmc } = req.body;
+  const idTeknisi = req.session.user.id; 
   
-  const sqlInsert = "INSERT INTO devices (device_type, model, serial_number, cocd, lokasi, employee_no, checked_out, no, jadwal_PMC) VALUES ('Laptop', ?, ?, ?, ?, ?, ?, ?, ?)";
-  const values = [model, serial_number, cocd, lokasi, employee_no, checked_out, no, jadwal_PMC];
+  const sqlInsert = `
+    INSERT INTO devices 
+    (device_type, no, model, serial_number, cocd, lokasi, employee_no, checked_out, hostname, jadwal_PMC) 
+    VALUES ('Laptop', ?, ?, ?, ?, ?, ?, ?, ?, ?)
+  `;
+  
+  // Urutan values harus sama dengan urutan kolom di atas
+  const values = [no, model, serial_number, cocd, lokasi, employee_no, checked_out, hostname, jadwal_PMC];
 
   db.query(sqlInsert, values, (err, result) => {
-    if (err) return res.status(500).send(err.message);
+    if (err) return res.status(500).send("Gagal Tambah Device: " + err.message);
     
-    // CATAT HISTORY 'ADD'
     const tahun = new Date().getFullYear();
-    const infoPerangkat = `${model} ${serial_number}`; 
+    const infoPerangkat = `${model} (${serial_number})`; 
     
     const sqlHist = `
         INSERT INTO histories 
-        (device_id, tahun, status_PMC, tanggal_cek, action_type, info_backup) 
-        VALUES (?, ?, ?, NOW(), 'Add', ?)
+        (device_id, tahun, status_PMC, tanggal_cek, action_type, info_backup, checked_by) 
+        VALUES (?, ?, ?, NOW(), 'Add', ?, ?)
     `;
     
-    db.query(sqlHist, [result.insertId, tahun, status_pmc, infoPerangkat], (errHist) => {
+    db.query(sqlHist, [result.insertId, tahun, status_pmc, infoPerangkat, idTeknisi], (errHist) => {
         if (errHist) console.error("Gagal simpan history tambah:", errHist);
         res.redirect('/laptop');
     });
@@ -84,9 +91,9 @@ router.get('/detail/:id', (req, res) => {
         }
 
         const pmcData = {
-          id: data.device_id, model: data.model, employee_no: data.employee_no || '-',
+          id: data.device_id, no: data.no, model: data.model, employee_no: data.employee_no || '-',
           serial: data.serial_number, checked_out: data.checked_out || '-',
-          cocd: data.cocd || '-', hostname: data.no, lokasi: data.lokasi || '-',
+          cocd: data.cocd || '-', hostname: data.hostname, lokasi: data.lokasi || '-',
           
           // Kirim dua versi biar aman di EJS
           jadwal_PMC: data.jadwal_PMC, 
@@ -132,15 +139,26 @@ router.get('/detail/edit/:id', (req, res) => {
 // ==================================================
 router.post('/detail/update/:id', (req, res) => {
   const id = req.params.id;
-  const { no, model, serial_number, cocd, lokasi, employee_no, checked_out, jadwal_PMC, status_pmc } = req.body; 
+  const idTeknisi = req.session.user.id; // Pastikan session user sudah ada
+  
+  // 1. Ambil SEMUA data dari body sesuai dengan atribut 'name' di EJS
+  const { no, model, serial_number, cocd, lokasi, employee_no, checked_out, hostname, jadwal_PMC, status_pmc } = req.body; 
 
-  console.log("UPDATE STATUS KE:", status_pmc);
-
-  const sqlUpdateDevice = "UPDATE devices SET no=?, model=?, serial_number=?, cocd=?, lokasi=?, employee_no=?, checked_out=?, jadwal_PMC=? WHERE device_id=?";
-  const valuesDevice = [no, model, serial_number, cocd, lokasi, employee_no, checked_out, jadwal_PMC, id];
+  // 2. Perbaiki SQL Update: Pastikan 'no' dan 'hostname' masuk hitungan
+  const sqlUpdateDevice = `
+    UPDATE devices 
+    SET no=?, model=?, serial_number=?, cocd=?, lokasi=?, employee_no=?, checked_out=?, hostname=?, jadwal_PMC=? 
+    WHERE device_id=?
+  `;
+  
+  // 3. Urutan Array VALUES harus 100% sama dengan urutan tanda tanya (?) di atas
+  const valuesDevice = [no, model, serial_number, cocd, lokasi, employee_no, checked_out, hostname, jadwal_PMC, id];
 
   db.query(sqlUpdateDevice, valuesDevice, (err) => {
-    if (err) return res.status(500).send("Gagal Update Device: " + err.message);
+    if (err) {
+      console.error("Gagal Update Device:", err);
+      return res.status(500).send("Gagal Update Device: " + err.message);
+    }
 
     const tahun = new Date().getFullYear();
     const sqlCheck = "SELECT riwayat_id FROM histories WHERE device_id = ? AND tahun = ?";
@@ -149,23 +167,25 @@ router.post('/detail/update/:id', (req, res) => {
         if (errCheck) return res.redirect(`/laptop/detail/${id}`);
 
         if (resultCheck.length > 0) {
-            // A. DATA ADA -> UPDATE SAJA
+            // A. UPDATE HISTORY: Masukkan ID Teknisi di checked_by
             const sqlUpdateHist = `
                 UPDATE histories 
-                SET status_PMC = ?, tanggal_cek = NOW(), action_type = 'Update' 
+                SET status_PMC = ?, tanggal_cek = NOW(), action_type = 'Update', checked_by = ? 
                 WHERE device_id = ? AND tahun = ?
             `;
             
-            db.query(sqlUpdateHist, [status_pmc, id, tahun], (errUpdate) => {
+            db.query(sqlUpdateHist, [status_pmc, idTeknisi, id, tahun], (errUpdate) => {
                 if(errUpdate) console.error("Update History Error:", errUpdate);
                 res.redirect(`/laptop/detail/${id}`);
             });
-
         } else {
-            // B. DATA BELUM ADA -> INSERT BARU
-            const sqlInsertHist = "INSERT INTO histories (device_id, tahun, status_PMC, tanggal_cek, action_type) VALUES (?, ?, ?, NOW(), 'Update')";
+            // B. INSERT HISTORY BARU: Masukkan ID Teknisi di checked_by
+            const sqlInsertHist = `
+                INSERT INTO histories (device_id, tahun, status_PMC, tanggal_cek, action_type, checked_by) 
+                VALUES (?, ?, ?, NOW(), 'Update', ?)
+            `;
             
-            db.query(sqlInsertHist, [id, tahun, status_pmc], (errInsert) => {
+            db.query(sqlInsertHist, [id, tahun, status_pmc, idTeknisi], (errInsert) => {
                 if(errInsert) console.error("Insert History Error:", errInsert);
                 res.redirect(`/laptop/detail/${id}`);
             });
@@ -173,7 +193,6 @@ router.post('/detail/update/:id', (req, res) => {
     });
   });
 });
-
 // ==================================================
 // 6. DELETE (VERSI FIX: PAKE NULL)
 // ==================================================
@@ -202,6 +221,82 @@ router.post('/detail/delete/:id', (req, res) => {
           });
       });
   });
+});
+
+// ==================================================
+// FITUR: BULK UPDATE (FIX: Update Device + History)
+// ==================================================
+router.post('/bulk-update', async (req, res) => {
+    // Tangkap 'bulan' dari frontend
+    const { ids, status, bulan } = req.body; 
+    const tahun = new Date().getFullYear();
+    const userId = req.session.user ? req.session.user.id : 1; 
+
+    if (!ids || ids.length === 0) {
+        return res.json({ success: false, message: "Tidak ada data" });
+    }
+
+    try {
+        for (const id of ids) {
+            await new Promise((resolve, reject) => {
+                
+                // 1. UPDATE TABEL DEVICES DULU (PENTING!)
+                // Supaya jadwal_PMC seragam dan bersih, jadi pasti muncul di laporan
+                const sqlUpdateDevice = "UPDATE devices SET jadwal_PMC = ? WHERE device_id = ?";
+                db.query(sqlUpdateDevice, [bulan, id], (errDev) => {
+                    if (errDev) console.error("Gagal update device di bulk:", errDev); 
+                    // Lanjut saja meski error kecil, biar history tetap jalan
+                    
+                    // 2. Ambil Info untuk Backup
+                    const sqlInfo = "SELECT model, serial_number FROM devices WHERE device_id = ?";
+                    db.query(sqlInfo, [id], (errInfo, resInfo) => {
+                        if (errInfo) return reject(errInfo);
+                        
+                        const infoBackup = resInfo.length > 0 ? `${resInfo[0].model} ${resInfo[0].serial_number}` : 'Unknown Device';
+
+                        // 3. Cek & Update History
+                        const sqlCheck = "SELECT riwayat_id FROM histories WHERE device_id = ? AND tahun = ?";
+                        db.query(sqlCheck, [id, tahun], (errCheck, rows) => {
+                            if (errCheck) return reject(errCheck);
+
+                            if (rows.length > 0) {
+                                // UPDATE HISTORY
+                                const sqlUpdate = `
+                                    UPDATE histories 
+                                    SET status_PMC = ?, 
+                                        tanggal_cek = NOW(), 
+                                        action_type = 'Bulk Update',
+                                        checked_by = ? 
+                                    WHERE device_id = ? AND tahun = ?
+                                `;
+                                db.query(sqlUpdate, [status, userId, id, tahun], (errUp) => {
+                                    if (errUp) reject(errUp);
+                                    else resolve();
+                                });
+                            } else {
+                                // INSERT HISTORY
+                                const sqlInsert = `
+                                    INSERT INTO histories 
+                                    (device_id, tahun, status_PMC, tanggal_cek, action_type, info_backup, checked_by) 
+                                    VALUES (?, ?, ?, NOW(), 'Bulk Update', ?, ?)
+                                `;
+                                db.query(sqlInsert, [id, tahun, status, infoBackup, userId], (errIn) => {
+                                    if (errIn) reject(errIn);
+                                    else resolve();
+                                });
+                            }
+                        });
+                    });
+                });
+            });
+        }
+
+        res.json({ success: true });
+
+    } catch (error) {
+        console.error("Bulk Update Error:", error);
+        res.status(500).json({ success: false });
+    }
 });
 
 module.exports = router;

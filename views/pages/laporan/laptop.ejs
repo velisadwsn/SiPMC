@@ -17,7 +17,6 @@
         <select name="tahun" onchange="this.form.submit()" style="width: 100px;">
           <% 
             const tahunSekarang = new Date().getFullYear();
-            // Menampilkan tahun saat ini dan 3 tahun ke belakang
             for(let i = tahunSekarang; i >= tahunSekarang - 3; i--) { 
           %>
             <option value="<%= i %>" <%= tahunAktif == i ? 'selected' : '' %>><%= i %></option>
@@ -25,7 +24,7 @@
         </select>
 
         <div class="search-box">
-          <input type="text" name="keyword" placeholder="Cari Model / SN..." value="<%= keyword %>">
+          <input type="text" name="keyword" placeholder="Cari" value="<%= keyword %>">
         </div>
       </form>
     </div>
@@ -35,7 +34,7 @@
     <thead>
       <tr>
         <th>No</th>
-        <th>Model</th>
+        <th>Model Laptop</th>
         <th>Serial Number</th>
         <th>Bulan</th>
         <th>Tahun</th>
@@ -52,7 +51,7 @@
             <td><%= item.serial_number %></td>
             <td><%= item.bulan %></td>
             <td><%= item.tahun %></td>
-            <td style="font-weight: bold; color: #0c2b57;"><%= item.pemeriksa %></td>
+            <td><%= item.pemeriksa || 'Tidak Ada Nama' %></td>
             <td>
               <a href="/laporan/previewlaptop/<%= item.device_id %>" target="_blank" class="btn primary" style="text-decoration: none; font-size: 12px;">Cetak PDF</a>
             </td>

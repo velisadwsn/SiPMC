@@ -28,7 +28,10 @@
                                 <% } %>
                             <% } %>
 
-                            pada <b>Laptop</b>
+                            pada 
+                            <b>
+                                <%= item.device_type ? item.device_type : 'Perangkat' %>
+                            </b>
 
                             <% if (item.action_type === 'Delete') { %>
                                 <span style="font-weight: normal; color: #444;"> 
@@ -36,6 +39,7 @@
                                 </span>
                             <% } %>
                         </div>
+
                         <div class="history-subtitle">
                             <% if (item.action_type === 'Delete') { %>
                                 Data perangkat ini sudah dihapus dari sistem.
@@ -44,13 +48,19 @@
                             <% } %>
                         </div>
                     </div>
+
                     <div class="history-meta">
                         <div class="history-date">
                             <%= new Date(item.tanggal_cek).toLocaleDateString('id-ID', { day: 'numeric', month: 'short' }) %>, 
                             <%= new Date(item.tanggal_cek).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }) %>
                         </div>
+                        
                         <% if (item.action_type !== 'Delete') { %>
-                            <a href="/laptop/detail/<%= item.device_id %>" class="history-link">Lihat Detail &rarr;</a>
+                            <% if (item.device_type === 'PC') { %>
+                                <a href="/pc/detail/<%= item.device_id %>" class="history-link">Lihat Detail &rarr;</a>
+                            <% } else { %>
+                                <a href="/laptop/detail/<%= item.device_id %>" class="history-link">Lihat Detail &rarr;</a>
+                            <% } %>
                         <% } %>
                     </div>
                 </div>

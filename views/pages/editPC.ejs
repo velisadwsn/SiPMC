@@ -1,66 +1,99 @@
 <main class="main">
   <div class="page-header">
-    <div class="page-title">Edit Detail Perangkat</div>
+    <div class="page-title">Edit Data Laptop</div>
   </div>
 
   <div class="card">
-    <form action="/pc/detail/update/<%= device.id %>" method="POST">
+    <form action="/pc/detail/update/<%= pc.device_id %>" method="POST">
+      
       <div class="form-grid-2col">
+        
         <div class="col">
+          
           <div class="form-row">
             <label>Model</label>
-            <input type="text" name="model" value="<%= device.model %>">
+            <input type="text" name="model" value="<%= pc.model %>" required>
           </div>
+
           <div class="form-row">
             <label>Serial Number</label>
-            <input type="text" name="serial" value="<%= device.serial %>">
+            <input type="text" name="serial_number" value="<%= pc.serial_number %>" required>
           </div>
+
           <div class="form-row">
-            <label>Site</label>
-            <input type="text" name="site" value="<%= device.site %>">
+            <label>Site</label> <input type="text" name="site" value="<%= pc.site %>">
           </div>
+
           <div class="form-row">
             <label>Lokasi</label>
-            <input type="text" name="lokasi" value="<%= device.lokasi %>">
+            <input type="text" name="lokasi" value="<%= pc.lokasi %>">
           </div>
+
         </div>
 
         <div class="col">
+          
           <div class="form-row">
             <label>Employee No</label>
-            <input type="text" name="employee_no" value="<%= device.employee_no %>">
+            <input type="text" name="employee_no" value="<%= pc.employee_no %>">
           </div>
+
           <div class="form-row">
             <label>Checked Out</label>
-            <input type="text" name="checked_out" value="<%= device.checked_out %>">
+            <input type="text" name="checked_out" value="<%= pc.checked_out %>">
           </div>
+
           <div class="form-row">
-            <label>Hostname</label>
-            <input type="text" name="hostname_sp" value="<%= device.hostname_sp %>">
+            <label>Hostname</label> <input type="text" name="hostname" value="<%= pc.hostname %>" required>
           </div>
+
+          <div class="form-row">
+            <label>No</label> <input type="text" name="no" value="<%= pc.no %>" required>
+          </div>
+
         </div>
+
       </div>
 
-      <div class="card pmc-card">
-        <h3>Preventive Maintenance Check (PMC)</h3>
-        <div class="form-grid">
-          <div class="form-row">
-            <label>Jadwal PMC</label>
-            <input type="text" name="jadwal_pmc" value="<%= device.jadwal_pmc %>">
-          </div>
-          <div class="form-row">
-            <label>Status PMC</label>
-            <select name="pmc_status">
-              <option value="Done" <%= device.pmc_status === 'Done' ? 'selected' : '' %>>Done</option>
-              <option value="Pending" <%= device.pmc_status === 'Pending' ? 'selected' : '' %>>Pending</option>
-            </select>
-          </div>
+      <h3 style="margin-top: 30px; margin-bottom: 15px; color: #0c2b57; border-bottom: 1px solid #eee; padding-bottom: 10px;">
+        Preventive Maintenance Check (PMC)
+      </h3>
+      
+      <div class="form-grid"> 
+        
+        <div class="form-row">
+          <label>Jadwal PMC</label>
+          <select name="jadwal_PMC">
+             <option value="Januari" <%= pc.jadwal_PMC === 'Januari' ? 'selected' : '' %>>Januari</option>
+             <option value="Februari" <%= pc.jadwal_PMC === 'Februari' ? 'selected' : '' %>>Februari</option>
+             <option value="Maret" <%= pc.jadwal_PMC === 'Maret' ? 'selected' : '' %>>Maret</option>
+             <option value="April" <%= pc.jadwal_PMC === 'April' ? 'selected' : '' %>>April</option>
+             <option value="Mei" <%= pc.jadwal_PMC === 'Mei' ? 'selected' : '' %>>Mei</option>
+             <option value="Juni" <%= pc.jadwal_PMC === 'Juni' ? 'selected' : '' %>>Juni</option>
+             <option value="Juli" <%= pc.jadwal_PMC === 'Juli' ? 'selected' : '' %>>Juli</option>
+             <option value="Agustus" <%= pc.jadwal_PMC === 'Agustus' ? 'selected' : '' %>>Agustus</option>
+             <option value="September" <%= pc.jadwal_PMC === 'September' ? 'selected' : '' %>>September</option>
+             <option value="Oktober" <%= pc.jadwal_PMC === 'Oktober' ? 'selected' : '' %>>Oktober</option>
+             <option value="November" <%= pc.jadwal_PMC === 'November' ? 'selected' : '' %>>November</option>
+             <option value="Desember" <%= pc.jadwal_PMC === 'Desember' ? 'selected' : '' %>>Desember</option>
+          </select>
         </div>
+
+        <div class="form-row">
+          <label>Status PMC</label>
+          <select name="status_pmc">
+            <option value="Pending" <%= pc.status_pmc === 'Pending' ? 'selected' : '' %>>Pending</option>
+            <option value="Done" <%= pc.status_pmc === 'Done' ? 'selected' : '' %>>Done</option>
+          </select>
+        </div>
+
       </div>
+
       <div class="actions">
-        <a href="/pc/detail/<%= device.id %>" class="btn">Batal</a>
+        <a href="/pc/detail/<%= pc.device_id %>" class="btn">Batal</a>
         <button type="submit" class="btn primary">Simpan Perubahan</button>
       </div>
+
     </form>
   </div>
   

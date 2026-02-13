@@ -144,11 +144,13 @@ const dateSimple = new Date().toLocaleDateString('id-ID', { day: '2-digit', mont
                         <td class="no-content-table no-border-r">2.</td>
                         <td colspan="4" class="no-border-r"><b>Standard Software</b></td>
                     </tr>
-                    <% ['Operating System', 'Antivirus', 'Microsoft Office'].forEach(sw => { %>
+                    <%  const sw= [
+                    {t: 'Operating System', s: 'Windows 11'}, {t: 'Antivirus', s: 'Tehtris'}, {t: 'Microsoft Office', s: 'WPS'}];
+                    sw.forEach(sw => { %>
                     <tr>
                         <td class="no-content-table v-line no-border-l"></td>
-                        <td class="bg-gray-l v-line no-border-l"><%= sw %></td>
-                        <td class="no-border-r" contenteditable="true">OK</td>
+                        <td class="bg-gray-l v-line no-border-l"><%= sw.t %></td>
+                        <td class="no-border-r" contenteditable="true"><%= sw.s %></td>
                         <td colspan="2" class="v-line"></td>
                         <td class="no-content-table"></td>
                         
@@ -176,8 +178,8 @@ const dateSimple = new Date().toLocaleDateString('id-ID', { day: '2-digit', mont
                 <div style="font-weight:bold; margin-top:10px; margin-left:40px ; font-family: Courier New;">Notes</div>
                 <div class="notes-box" contenteditable="true">
                     Hostname : <%= data.hostname %><br><br>
-                    IP Address : 192.168.16.62<br><br>
-                    MAC Address : 10:98:19:1E:CB:C1
+                    IP Address : <br><br>
+                    MAC Address : 
                 </div>
             </td>
         </tr>
@@ -189,7 +191,7 @@ const dateSimple = new Date().toLocaleDateString('id-ID', { day: '2-digit', mont
                         
                         <td width="33%">
                             <div style="text-align: left; margin-bottom: 20px;"></div>
-                            <div class="text-align: left;">Person In Charge, SIG</div>
+                            <div class="text-center">Person In Charge, SIG</div>
                         </td>
                         <td width="33%">
                             <div style="text-align: center; margin-bottom: 20px;"></div>
