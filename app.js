@@ -45,15 +45,23 @@ const dataLaptopRoutes = require('./routes/dataLaptop');
 const riwayatRoutes = require('./routes/riwayat');
 const laporanRoutes = require('./routes/laporan');
 const userRoutes = require('./routes/user');
+const harianRouter = require('./routes/harian');
+const bulananRouter = require('./routes/bulanan');
 
-app.use('/', authRoutes); // Halaman Login
+// 6. ROUTES
+app.use('/', authRoutes); // Halaman Login (Tanpa isAuth)
+
+// Pindahkan semua route ini ke bawah agar terproteksi login dan dapet data USER
 app.use('/dashboard', isAuth, dashboardRoutes);
 app.use('/pc', isAuth, dataPCRoutes);
 app.use('/laptop', isAuth, dataLaptopRoutes);
 app.use('/riwayat', isAuth, riwayatRoutes);
 app.use('/laporan', isAuth, laporanRoutes);
 app.use('/user', isAuth, userRoutes);
+app.use('/harian', isAuth, harianRouter); // TAMBAHKAN isAuth
+app.use('/bulanan', isAuth, bulananRouter); // TAMBAHKAN isAuth
 
 app.listen(3000, () => {
   console.log('Server jalan di http://localhost:3000');
 });
+

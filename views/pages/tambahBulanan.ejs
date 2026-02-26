@@ -1,0 +1,84 @@
+<main class="main">
+  <div class="page-header">
+    <div class="page-title">Tambah Data Bulanan</div>
+  </div>
+
+  <div class="card">
+    <form action="/bulanan/tambah" method="POST">
+      
+      <div class="form-grid-2col">
+        <div class="col">
+          <div class="form-row">
+            <label>Model</label>
+            <input type="text" name="model" required>
+          </div>
+          <div class="form-row">
+            <label>Serial Number</label>
+            <input type="text" name="serial_number" required>
+          </div>
+          <div class="form-row">
+            <label>CoCd</label>
+            <input type="text" name="cocd">
+          </div>
+          <div class="form-row">
+            <label>Lokasi</label>
+            <input type="text" name="lokasi">
+          </div>
+        </div>
+
+        <div class="col">
+          <div class="form-row">
+            <label>Employee No</label>
+            <input type="text" name="employee_no">
+          </div>
+          <div class="form-row">
+            <label>Checked Out</label>
+            <input type="text" name="checked_out">
+          </div>
+          <div class="form-row">
+            <label>Hostname</label> 
+            <input type="text" name="hostname" required>
+          </div>
+          <div class="form-row">
+            <label>No</label> 
+            <input type="text" name="no" required>
+          </div>
+        </div>
+      </div>
+
+      <h3 style="margin-top: 30px; margin-bottom: 15px; color: #0c2b57; border-bottom: 1px solid #eee; padding-bottom: 10px;">
+        Preventive Maintenance Check (PMC)
+      </h3>
+      
+      <div class="form-grid"> 
+        <div class="form-row">
+          <label>Tipe Perangkat</label>
+          <select name="device_type" required>
+            <option value="Laptop">Laptop</option>
+            <option value="PC">PC</option>
+          </select>
+        </div>
+        
+        <div class="form-row">
+          <label>Jadwal PMC</label>
+          <select name="jadwal_PMC">
+             <option value="Bulanan" selected>Bulanan</option>
+          </select>
+        </div>
+
+        <div class="form-row">
+          <label>Status PMC</label>
+          <select name="status_pmc">
+            <option value="Pending" selected>Pending</option>
+            <option value="Done">Done</option>
+          </select>
+        </div>
+        </div>
+
+      <div class="actions">
+        <a href="/bulanan" class="btn">Batal</a>
+        <button type="submit" class="btn primary">Simpan Data Baru</button>
+      </div>
+    </form>
+  </div>
+</main>

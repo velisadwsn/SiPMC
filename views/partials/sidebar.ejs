@@ -32,6 +32,17 @@
       </ul>
     </li>
 
+<ul class="menu">
+    <li class="<%= active === 'Harian' ? 'active' : '' %>">
+      <a href="/harian">Harian</a>
+    </li>
+
+  <ul class="menu">
+    <li class="<%= active === 'Bulanan' ? 'active' : '' %>">
+      <a href="/bulanan">Bulanan</a>
+    </li>
+
+
     <li class="has-submenu <%= active === 'laporan' ? 'open' : '' %>">
       <input type="checkbox" id="laporan-toggle"
         <%= active === 'laporan' ? 'checked' : '' %>>
