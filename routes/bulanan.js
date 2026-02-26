@@ -6,26 +6,29 @@ const db = require("../config/database");
 // 1. LIST BULANAN + CARI
 // ==================================================
 router.get("/", (req, res) => {
-  const { keyword } = req.query;
+  let keyword = req.query.keyword || "";
+  keyword = keyword.trim();
 
   let sql = `
     SELECT d.*, 
     COALESCE(
         (SELECT status_PMC FROM histories h 
          WHERE h.device_id = d.device_id 
-         AND MONTH(h.tanggal_cek) = MONTH(CURDATE()) -- Cek Bulan Sekarang
-         AND YEAR(h.tanggal_cek) = YEAR(CURDATE())   -- Cek Tahun Sekarang
+         AND MONTH(h.tanggal_cek) = MONTH(CURDATE()) 
+         AND YEAR(h.tanggal_cek) = YEAR(CURDATE())
          ORDER BY h.riwayat_id DESC LIMIT 1),
         'Pending'
     ) as status_terakhir
     FROM devices d
     WHERE d.jadwal_PMC = 'Bulanan'
-`;
+  `;
 
   let params = [];
-  if (keyword) {
-    sql += " AND (d.model LIKE ? OR d.serial_number LIKE ? OR d.no LIKE ?)";
-    params.push(`%${keyword}%`, `%${keyword}%`, `%${keyword}%`);
+
+  // Filter Carian Kata Kunci
+  if (keyword !== "") {
+      sql += " AND (d.checked_out LIKE ? OR d.model LIKE ? OR d.serial_number LIKE ?)";
+      params.push(`%${keyword}%`, `%${keyword}%`, `%${keyword}%`); 
   }
 
   db.query(sql, params, (err, results) => {
@@ -37,7 +40,7 @@ router.get("/", (req, res) => {
       active: "bulanan",
       user: req.session.user,
       devices: results,
-      keyword: keyword || "",
+      keyword: keyword,
       periode: new Date().toLocaleString('id-ID', { month: 'long', year: 'numeric' })
     });
   });

@@ -6,14 +6,15 @@ const db = require("../config/database");
 // 1. LIST HARIAN + CARI (Hanya menampilkan jadwal_PMC = 'Harian')
 // ==================================================
 router.get("/", (req, res) => {
-  const { keyword } = req.query;
+  let keyword = req.query.keyword || "";
+  keyword = keyword.trim();
 
   let sql = `
     SELECT d.*, 
     COALESCE(
         (SELECT status_PMC FROM histories h 
          WHERE h.device_id = d.device_id 
-         AND DATE(h.tanggal_cek) = CURDATE() -- Kuncinya di sini
+         AND DATE(h.tanggal_cek) = CURDATE() 
          ORDER BY h.riwayat_id DESC LIMIT 1),
         'Pending'
     ) as status_terakhir
@@ -21,11 +22,12 @@ router.get("/", (req, res) => {
     WHERE d.jadwal_PMC = 'Harian'
   `;
 
-
   let params = [];
-  if (keyword) {
-    sql += " AND (d.model LIKE ? OR d.serial_number LIKE ? OR d.no LIKE ?)";
-    params.push(`%${keyword}%`, `%${keyword}%`, `%${keyword}%`);
+
+  // Filter Carian Kata Kunci
+  if (keyword !== "") {
+      sql += " AND (d.checked_out LIKE ? OR d.model LIKE ? OR d.serial_number LIKE ?)";
+      params.push(`%${keyword}%`, `%${keyword}%`, `%${keyword}%`); 
   }
 
   db.query(sql, params, (err, results) => {
@@ -37,7 +39,7 @@ router.get("/", (req, res) => {
       active: "harian",
       user: req.session.user,
       devices: results,
-      keyword: keyword || "",
+      keyword: keyword,
       periode: new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })
     });
   });

@@ -6,9 +6,13 @@ const db = require("../config/database");
 // 1. HALAMAN UTAMA (LIST LAPTOP)
 // ==================================================
 router.get("/", (req, res) => {
-  const { bulan, keyword } = req.query;
+  let bulan = req.query.bulan || "";
+  let keyword = req.query.keyword || "";
 
-  // GUNAKAN 'NOT IN' agar semua data Monitoring Khusus (Bulanan & Harian) diblokir dari sini
+  // Bersihkan keyword dari spasi yang tidak disengaja
+  keyword = keyword.trim();
+
+  // Query Dasar
   let sql = `
     SELECT d.*, 
     COALESCE(
@@ -19,29 +23,40 @@ router.get("/", (req, res) => {
     WHERE d.device_type = 'Laptop' 
     AND d.jadwal_PMC NOT IN ('Bulanan', 'Harian') 
   `;
-  
+
   let params = [];
 
-  if (bulan) { 
-    sql += " AND d.jadwal_PMC LIKE ?"; 
-    params.push(`%${bulan}%`); 
-  }
-  
-  if (keyword) { 
-    sql += " AND (d.no LIKE ? OR d.model LIKE ? OR d.serial_number LIKE ?)"; 
-    params.push(`%${keyword}%`, `%${keyword}%`, `%${keyword}%`); 
+  // --- LOGIKA BARU YANG BISA DIGABUNG ---
+
+  // 1. Cek Bulan Dulu: Kalau ada bulan yang dipilih, saring bulannya
+  if (bulan !== "") {
+      sql += " AND d.jadwal_PMC LIKE ?";
+      params.push(`%${bulan}%`);
   }
 
+  // 2. Cek Keyword: Kalau ada nama yang dicari, saring lagi namanya dari hasil bulan di atas
+  if (keyword !== "") {
+      sql += " AND (d.checked_out LIKE ? OR d.model LIKE ? OR d.serial_number LIKE ?)";
+      params.push(`%${keyword}%`, `%${keyword}%`, `%${keyword}%`); 
+  }
+
+  // --------------------------------------
+
+  // Eksekusi Database
   db.query(sql, params, (err, results) => {
-    if (err) return res.status(500).send("DB Error");
+    if (err) {
+        console.error("Error SQL:", err);
+        return res.status(500).send("DB Error");
+    }
+    
     res.render("pages/dataLaptop", {
       title: "Data Laptop", 
       layout: "layouts/main", 
       css: "dataDevice.css",
       active: "laptop", 
       laptops: results, 
-      bulan: bulan || "", 
-      keyword: keyword || ""
+      bulan: bulan, 
+      keyword: keyword
     });
   });
 });
@@ -94,9 +109,13 @@ router.get('/detail/:id', (req, res) => {
     if (err || results.length === 0) return res.status(404).send("Not Found");
     const data = results[0];
 
-    const sqlHist = "SELECT status_PMC FROM histories WHERE device_id = ? ORDER BY h.riwayat_id DESC LIMIT 1";
+    // PERBAIKAN: Hapus huruf 'h.' di depan riwayat_id
+    const sqlHist = "SELECT status_PMC FROM histories WHERE device_id = ? ORDER BY riwayat_id DESC LIMIT 1";
 
     db.query(sqlHist, [id], (errHist, resultHist) => {
+        // Biar ketahuan kalau ada error di terminal
+        if (errHist) console.error("Error Detail Laptop:", errHist.message);
+
         let lastStatus = (resultHist && resultHist.length > 0) ? resultHist[0].status_PMC : 'Pending';
 
         const pmcData = {

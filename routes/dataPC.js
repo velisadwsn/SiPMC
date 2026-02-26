@@ -3,14 +3,14 @@ const router = express.Router();
 const db = require("../config/database");
 
 // ==================================================
-// 1. HALAMAN UTAMA (LIST PC - TANPA DATA BULANAN)
-// ==================================================
-// 1. HALAMAN UTAMA (LIST PC - TANPA DATA BULANAN & HARIAN)
+// 1. HALAMAN UTAMA (LIST PC)
 // ==================================================
 router.get("/", (req, res) => {
-  const { bulan, keyword } = req.query;
+  let bulan = req.query.bulan || "";
+  let keyword = req.query.keyword || "";
 
-  // PERBAIKAN: Gunakan NOT IN agar data Harian dan Bulanan tidak masuk ke sini
+  keyword = keyword.trim();
+
   let sql = `
     SELECT d.*, 
     COALESCE(
@@ -18,32 +18,38 @@ router.get("/", (req, res) => {
         'Pending'
     ) as status_terakhir
     FROM devices d 
-    WHERE d.device_type = 'PC'
-    AND d.jadwal_PMC NOT IN ('Bulanan', 'Harian')
+    WHERE d.device_type = 'PC' 
+    AND d.jadwal_PMC NOT IN ('Bulanan', 'Harian') 
   `;
-  
+
   let params = [];
 
-  if (bulan) { 
-    sql += " AND d.jadwal_PMC LIKE ?"; 
-    params.push(`%${bulan}%`); 
+  // 1. Filter Bulan
+  if (bulan !== "") {
+      sql += " AND d.jadwal_PMC LIKE ?";
+      params.push(`%${bulan}%`);
   }
-  
-  if (keyword) { 
-    sql += " AND (d.no LIKE ? OR d.model LIKE ? OR d.serial_number LIKE ?)"; 
-    params.push(`%${keyword}%`, `%${keyword}%`, `%${keyword}%`); 
+
+  // 2. Filter Carian Kata Kunci
+  if (keyword !== "") {
+      sql += " AND (d.checked_out LIKE ? OR d.model LIKE ? OR d.serial_number LIKE ?)";
+      params.push(`%${keyword}%`, `%${keyword}%`, `%${keyword}%`); 
   }
 
   db.query(sql, params, (err, results) => {
-    if (err) return res.status(500).send("DB Error");
+    if (err) {
+        console.error("Error SQL:", err);
+        return res.status(500).send("DB Error");
+    }
+    
     res.render("pages/dataPC", {
       title: "Data PC", 
       layout: "layouts/main", 
       css: "dataDevice.css",
       active: "pc", 
-      pcs: results, 
-      bulan: bulan || "", 
-      keyword: keyword || ""
+      pcs: results, // Pastikan EJS anda menggunakan 'pcs' atau ikut variabel asal anda
+      bulan: bulan, 
+      keyword: keyword
     });
   });
 });

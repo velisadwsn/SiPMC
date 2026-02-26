@@ -23,7 +23,8 @@
                     <option value="November" <%= bulan === 'November' ? 'selected' : '' %>>November</option>
                     <option value="Desember" <%= bulan === 'Desember' ? 'selected' : '' %>>Desember</option>
                 </select>
-                <input type="text" name="keyword" class="input-search" placeholder="Cari" value="<%= keyword %>">
+    
+                <input type="text" name="keyword" class="input-search" placeholder="Cari Nama" value="<%= keyword %>">
             </form>
 
             <% if (bulan) { %>
@@ -110,7 +111,7 @@
                 <% listPending.forEach(item => { %>
                     <div class="list-card" data-id="<%= item.device_id %>">
                         <div class="card-left">
-                            <div class="model-text"><%= item.model %></div>
+                            <div class="co-text"><%= item.checked_out %></div>
                             <div class="sn-text">SN: <%= item.serial_number %></div>
                             <div class="no-text">No: <%= item.no %></div>
                         </div>
@@ -132,7 +133,7 @@
                 <% listDone.forEach(item => { %>
                     <div class="list-card" data-id="<%= item.device_id %>">
                         <div class="card-left">
-                            <div class="model-text"><%= item.model %></div>
+                            <div class="co-text"><%= item.checked_out %></div>
                             <div class="sn-text">SN: <%= item.serial_number %></div>
                             <div class="no-text">No: <%= item.no %></div>
                         </div>
