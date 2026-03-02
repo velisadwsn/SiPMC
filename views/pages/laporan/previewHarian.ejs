@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <title>Checklist PMC PC - <%= data.serial_number %></title>
+    <title>Checklist PMC Harian - <%= data.serial_number %></title>
     <style>
         /* Menggunakan font campuran sesuai template asli */
         body { font-family: 'Courier New', Courier, monospace; background: #525659; padding: 20px; margin: 0; }
@@ -105,9 +105,9 @@ const dateSimple = new Date().toLocaleDateString('id-ID', { day: '2-digit', mont
         </table>
         <table class="data-grid">
             <tr>
-                <td class="val-cell" width="30%">PC</td>
+                <td class="val-cell" width="30%"><%= data.model %></td>
                 <td width="5%"></td>
-                <td class="val-cell" width="30%" contenteditable="true">SISI-204-PCS-111</td>
+                <td class="val-cell" width="30%" contenteditable="true">SIG-2024-MPC-00006</td>
                 <td width="5%"></td>
                 <td class="val-cell" width="30%">Padang</td>
             </tr>
@@ -117,9 +117,9 @@ const dateSimple = new Date().toLocaleDateString('id-ID', { day: '2-digit', mont
                 <td class="lab-cell">OpCo</td>
             </tr>
             <tr>
-                <td class="val-cell"><%= data.model %></td><td></td>
+                <td class="val-cell">Lenovo Mini PC</td><td></td>
                 <td class="val-cell"><%= data.serial_number %></td><td></td>
-                <td class="val-cell" contenteditable="true">nama unit</td>
+                <td class="val-cell" contenteditable="true"><%= data.lokasi %></td>
             </tr>
             <tr>
                 <td class="lab-cell">Merk/ Type</td><td></td>
@@ -145,66 +145,59 @@ const dateSimple = new Date().toLocaleDateString('id-ID', { day: '2-digit', mont
                         <td class="v-line">Error</td>
                     </tr>
 
-                    <tr class="space">
-                        <td class="no-content-table no-border-r">1.</td>
-                        <td colspan="4" class="no-border-r"><b>Check Device Functions</b></td>
-                    </tr>
-                    <% const hw = [
-                        {n:'Monitor / LCD', d:'Dell'}, {n:'RAM', d:'16 GB'}, {n:'Hardisk', d:'SSD 512 GB'},
-                        {n:'Power Supply/Adaptor', d:''}, {n:'DVD/CD ROM', d:'', e:true},
-                        {n:'Keyboard', d:'Dell'}, {n:'Mouse', d:'Dell'}, {n:'Clean Device', d:''}
-                    ]; hw.forEach(item => { %>
+                   <tr class="space">
+                    <td class="no-content-table no-border-r">1.</td>
+                    <td colspan="4" class="no-border-r"><b>Check Device Functions</b></td>
+                   </tr>
+                    <% 
+                    const hw = [
+                        {n: 'Mikrofon bisa mengirim suara', d: ''},
+                        {n: 'Endpoint bisa menyala', d: ''},
+                        {n: 'Speaker bisa berfungsi dengan baik', d: ''},
+                        {n: 'Kamera berfungsi dengan normal', d: ''},
+                        {n: 'Remote endpoint berfungsi dengan baik', d: ''},
+                        {n: 'Status baterai remote masih bagus', d: ''},
+                        {n: 'Kabel HDMI berfungsi baik dan dapat digunakan', d: ''},
+                        {n: 'Konektor LAN dalam kondisi bagus', d: ''},
+                        {n: 'Kabel LAN bisa digunakan dengan baik', d: ''},
+                        {n: 'Video in/out berfungsi normal', d: ''},
+                        {n: 'Audio in/out berfungsi normal', d: ''},
+                        {n: 'Sharing presentasi dan video lancar (tidak ada blur)', d: ''}
+                    ]; 
+
+                    hw.forEach(item => { %>
                     <tr>
                         <td class="no-content-table v-line no-border-l"></td>
-                        <td class="bg-gray-l v-line no-border-l" style="font-style:italic;"><%= item.n %></td>
-                        <td class="center v-line" contenteditable="true"><%= item.e ? '' : '✓' %></td>
-                        <td class="center blue-last-line" contenteditable="true"><%= item.e ? '✓' : '' %></td>
-                        <td class="v-line" contenteditable="true"><%= item.d %></td>
-                      
+                        <td class="bg-gray-l v-line no-border-l" style="font-style:italic; font-size: 9px;"><%= item.n %></td>
+                        <td class="text-center v-line" contenteditable="true" width="10%">✓</td> <td class="text-center v-line" contenteditable="true" width="10%"></td>  <td class="v-line" contenteditable="true"><%= item.d %></td>
                     </tr>
                     <% }) %>
 
-                    <tr>
-                        <td class="no-content-table no-border-r">2.</td>
-                        <td colspan="4" class="no-border-r"><b>Standard Software</b></td>
-                    </tr>
-                    <%  const sw= [
-                    {t: 'Operating System', s: 'Windows 11'}, {t: 'Antivirus', s: 'Tehtris'}, {t: 'Microsoft Office', s: 'WPS'}];
-                    sw.forEach(sw => { %>
-                    <tr>
-                        <td class="no-content-table v-line no-border-l"></td>
-                        <td class="bg-gray-l v-line no-border-l"><%= sw.t %></td>
-                        <td class="no-border-r" contenteditable="true"><%= sw.s %></td>
-                        <td colspan="2" class="v-line"></td>
-                        <td class="no-content-table"></td>
-                        
-                        
-                    </tr>
-                    <% }) %>
-
-                    <tr>
-                        <td class="no-content-table no-border-r">3.</td>
-                        <td colspan="4" class="no-border-r"><b>Additional Software</b></td>
-                    </tr>
-                    <% for(let i=1; i<=5; i++){ %>
-                    <tr>
-                        <td class="no-content-table v-line no-border-l"></td>
-                        <td colspan="2" class="v-line no-border-l" style="font-style:italic;"><%= i %>.</td>
-                        <td class="no-border-l" style="font-style:italic;"><%= i+5 %>.</td> 
-                        <td class="v-line"></td>
-                        <td class="no-content-table"></td>
-                    
-                        
-                    </tr>
-                    <% } %>
+                   
                 </table>
 
-                <div style="font-weight:bold; margin-top:10px; margin-left:40px ; font-family: Courier New;">Notes</div>
-                <div class="notes-box" contenteditable="true">
-                    Hostname : <%= data.hostname %><br><br>
-                    IP Address : <br><br>
-                    MAC Address : 
-                </div>
+                 <div style="font-weight:bold; margin-top:15px; margin-left:40px; font-family: 'Courier New', Courier, monospace;">Notes</div>
+                <table class="content-table" style="width: 90%; margin-left: 40px; margin-right: 28px; margin-top: 5px; border: 1.5px solid black;">
+                    <tr>                        
+                        <td class="v-line" contenteditable="true">IP address endpoint: <%= data.ip_address || 'wifi Onliy' %></td>
+                    </tr>
+                    <tr>                        
+                        <td class="v-line" contenteditable="true">Windows Specifications: Windows 11 Pro 64-bit</td>
+                    </tr>
+                    <tr>                     
+                        <td class="v-line" contenteditable="true">Version: 24H2</td>
+                    </tr>
+                    <tr>                       
+                        <td class="v-line" contenteditable="true">Processor: Intel® Core™ i5-14400T 1.50 Ghz</td>
+                    </tr>
+                    <tr>                      
+                        <td class="v-line" contenteditable="true">RAM: 8 GB</td>
+                    </tr>
+                    <tr>
+                        <td class="v-line" contenteditable="true">Antivirus: Tehtris</td>
+                    </tr>
+                </table>
+
             </td>
         </tr>
 
@@ -218,9 +211,9 @@ const dateSimple = new Date().toLocaleDateString('id-ID', { day: '2-digit', mont
                             <div class="text-center">Person In Charge, SIG</div>
                         </td>
                         <td width="33%">
-                            <div style="text-align: center; margin-bottom: 20px;"></div>
-                            <div class="text-center">PIC</div>
-                        </td>
+                        
+                        </td>    
+
                         <td width="33%">
                             <div style="text-align: left; margin-bottom: 10px;">Padang, <%= dateSimple %></div>
                             <div class="text-align: left">Officer Preventive Maintenance</div>
@@ -231,9 +224,8 @@ const dateSimple = new Date().toLocaleDateString('id-ID', { day: '2-digit', mont
                             <div class="sig-line"></div>
                             <span contenteditable="true">Roni Mahmudi</span>
                         </td>
-                        <td class="text-center" style="padding-top:60px;">
-                            <div class="sig-line"></div>
-                            <%= data.checked_out || 'nama employee' %>
+                        <td>
+                            
                         </td>
                         <td class="text-center">
                             <div style="height:50px;">

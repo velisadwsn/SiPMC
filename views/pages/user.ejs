@@ -14,7 +14,11 @@
           </label>
         </form>
       </div>
-      <a href="/logout" class="btn-logout-link">Keluar Aplikasi</a>
+     <a href="/logout" 
+   class="btn-logout-link" 
+   onclick="return konfirmasiKeluar(event, this.href)">
+   Keluar Aplikasi
+</a>
     </div>
 
     <div class="user-form-card">
@@ -47,3 +51,32 @@
     </div>
   </div>
 </main>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+function konfirmasiKeluar(event, url) {
+    // 1. Stop browser agar tidak langsung pindah halaman
+    event.preventDefault();
+
+    // 2. Munculkan SweetAlert
+    Swal.fire({
+        title: 'Keluar aplikasi?',
+        text: "Anda harus login kembali untuk mengakses data.",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33', 
+        cancelButtonColor: '#2A9D8F',
+        confirmButtonText: 'Ya, Keluar!',
+        cancelButtonText: 'Tidak',
+        reverseButtons: true 
+    }).then((result) => {
+        if (result.isConfirmed) {
+          
+            window.location.href = url;
+        }
+    });
+
+    
+    return false;
+}
+</script>

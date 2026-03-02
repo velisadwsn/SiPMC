@@ -1,6 +1,17 @@
 <main class="main">
-    <div class="page-header">
-        <div class="page-title">Riwayat Perangkat</div>
+    <div class="page-header" style="display: flex; justify-content: space-between; align-items: center;">
+        <div class="page-title">Riwayat Aktivitas Perangkat</div>
+        
+        <div class="filter-area">
+            <form action="/riwayat" method="GET">
+                <select name="type" onchange="this.form.submit()" class="filter-select">
+                    <option value="">-- Semua Kategori --</option>
+                    <option value="Harian" <%= filterAktif === 'Harian' ? 'selected' : '' %>>Harian</option>
+                    <option value="Bulanan" <%= filterAktif === 'Bulanan' ? 'selected' : '' %>>Bulanan</option>
+                    <option value="Tahunan" <%= filterAktif === 'Tahunan' ? 'selected' : '' %>>Tahunan</option>
+                </select>
+            </form>
+        </div>
     </div>
 
     <div class="history-list">
@@ -9,50 +20,69 @@
         <% } else { %>
             <% histories.forEach(item => { %>
                 <% 
-                   let cssClass = '';
-                   if(item.action_type === 'Add') cssClass = 'added';
-                   else if(item.action_type === 'Delete') cssClass = 'deleted';
+                    // Menentukan warna badge kategori
+                    const tipe = (item.pmc_type || '').toLowerCase();
+                    let badgeClass = 'badge-default';
+                    if(tipe === 'harian') badgeClass = 'badge-harian';
+                    else if(tipe === 'bulanan') badgeClass = 'badge-bulanan';
+                    else if(tipe === 'tahunan') badgeClass = 'badge-tahunan';
                 %>
-                <div class="history-item <%= cssClass %>">
+                <div class="history-item <%= item.action_type === 'Add' ? 'added' : (item.action_type === 'Delete' ? 'deleted' : '') %>">
                     <div class="history-content">
                         <div class="history-title">
                             <% if (item.action_type === 'Add') { %>
-                                <span style="color: #2e7d32; font-weight: bold;">Perangkat Baru Ditambahkan</span>
+                                <span class="text-add">Perangkat Baru Ditambahkan</span>
                             <% } else if (item.action_type === 'Delete') { %>
-                                <span style="color: #c62828; font-weight: bold;">Perangkat Telah Dihapus</span>
+                                <span class="text-delete">Perangkat Telah Dihapus</span>
                             <% } else { %>
                                 <% if (item.status_PMC === 'Done') { %>
-                                    <span style="color: #2e7d32; font-weight: bold;">Maintenance Selesai (Done)</span>
+                                    <span class="text-add">Maintenance Done</span>
                                 <% } else { %>
-                                    <span style="color: #ef6c00; font-weight: bold;">Status Diupdate ke Pending</span>
+                                    <span class="text-update">Maintenance Pending</span>
                                 <% } %>
                             <% } %>
 
-                            pada <b>Laptop</b>
-
-                            <% if (item.action_type === 'Delete') { %>
-                                <span style="font-weight: normal; color: #444;"> 
-                                    <%= item.info_backup %> 
-                                </span>
+                            <span class="device-type">pada <b><%= item.device_type || 'Perangkat' %></b></span>
+                            
+                            <% if (item.pmc_type) { %>
+                                <span class="badge-pmc <%= badgeClass %>"><%= item.pmc_type %></span>
                             <% } %>
                         </div>
+
                         <div class="history-subtitle">
                             <% if (item.action_type === 'Delete') { %>
-                                Data perangkat ini sudah dihapus dari sistem.
+                                <%= item.info_backup %> 
                             <% } else { %>
                                 <%= item.model %> | SN: <%= item.serial_number %>
                             <% } %>
                         </div>
                     </div>
-                    <div class="history-meta">
-                        <div class="history-date">
-                            <%= new Date(item.tanggal_cek).toLocaleDateString('id-ID', { day: 'numeric', month: 'short' }) %>, 
-                            <%= new Date(item.tanggal_cek).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }) %>
-                        </div>
-                        <% if (item.action_type !== 'Delete') { %>
-                            <a href="/laptop/detail/<%= item.device_id %>" class="history-link">Lihat Detail &rarr;</a>
-                        <% } %>
-                    </div>
+
+                   <div class="history-meta">
+    <div class="history-date">
+        <%= new Date(item.tanggal_cek).toLocaleDateString('id-ID', { day: 'numeric', month: 'short' }) %>, 
+        <%= new Date(item.tanggal_cek).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }) %>
+    </div>
+    
+    <% if (item.action_type !== 'Delete' && item.device_id) { %>
+        <% 
+            // LOGIKA PENENTUAN LINK DETAIL 
+            let detailLink = '#';
+            const pmcType = (item.pmc_type || '').toLowerCase();
+            const deviceType = (item.device_type || 'pc').toLowerCase();
+
+            if (pmcType === 'harian') {
+                detailLink = `/harian/detail/${item.device_id}`;
+            } else if (pmcType === 'bulanan') {
+                detailLink = `/bulanan/detail/${item.device_id}`;
+            } else {
+                // Default untuk Tahunan (PC/Laptop Sewa)
+                detailLink = `/${deviceType}/detail/${item.device_id}`;
+            }
+        %>
+        <a href="<%= detailLink %>" class="history-link">Lihat Detail &rarr;</a>
+    <% } %>
+</div>
                 </div>
             <% }) %>
         <% } %>

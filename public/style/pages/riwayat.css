@@ -25,6 +25,11 @@
     width: fit-content;  /* Lebar menyesuaikan panjang teks */
     box-shadow: 0 2px 4px rgba(0,0,0,0.05); /* Bayangan tipis */
 }
+.filter-area select {
+  padding: 8px 12px;
+  border-radius: 6px;
+    font-size: 16px;
+}
 
 /* ================= LIST CONTAINER ================= */
 .history-list {
@@ -131,3 +136,22 @@
         opacity: 1; /* Di HP link selalu muncul */
     }
 }
+
+.action-text { font-weight: bold; font-size: 13px; }
+.action-text.add { color: #2e7d32; }
+.action-text.delete { color: #c62828; }
+.action-text.update { color: #ef6c00; }
+
+/* Badge PMC Kategori */
+.badge-pmc {
+    color: white; padding: 2px 8px; border-radius: 12px;
+    font-size: 10px; margin: 0 5px; font-weight: bold; text-transform: uppercase;
+}
+.badge-harian { background-color: #007bff; }
+.badge-bulanan { background-color: #6f42c1; }
+.badge-tahunan { background-color: #28a745; }
+.badge-default { background-color: #6c757d; }
+
+.history-subtitle { color: #666; font-size: 12px; margin-top: 5px; }
+.history-date { font-size: 11px; color: #999; text-align: right; }
+.history-link { color: #0c2b57; font-size: 12px; text-decoration: none; font-weight: bold; }

@@ -1,0 +1,92 @@
+<main class="main">
+  <div class="page-header">
+    <div class="page-title">Laporan PMC Harian</div>
+
+    <div class="filter-area">
+      <form action="/laporan/harian" method="GET" style="display: flex; gap: 10px; align-items: center;">
+        <input type="date" name="tanggal" value="<%= tanggalAktif %>" onchange="this.form.submit()">
+
+        <div class="search-box">
+          <input type="text" name="keyword" placeholder="Cari Model/Serial" value="<%= keyword %>">
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <table class="laporan-table">
+    <thead>
+      <tr>
+        <th>No</th>
+        <th>Perangkat</th>
+        <th>Serial Number</th>
+        <th>Lokasi</th>
+        <th>Tanggal Cek</th>
+        <th>Pemeriksa</th>
+        <th>Foto Bukti</th>
+        <th>Aksi</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% if (laporan.length > 0) { %>
+        <% laporan.forEach((item, index) => { %>
+          <tr>
+            <td><%= index + 1 %></td>
+            <td><%= item.model %></td>
+            <td><%= item.serial_number %></td>
+            <td><%= item.lokasi %></td>
+            <td><%= item.tgl_cek %></td>
+            <td><%= item.pemeriksa || '-' %></td>
+            <td>
+              <% if (item.foto_bukti) { %>
+                <span style="color: green;">Ada</span>
+              <% } else { %>
+                <span style="color: orange;">Belum Ada</span>
+              <% } %>
+            </td>
+            <td>
+              <div style="display: flex; gap: 5px;">
+                <a href="/laporan/preview/<%= item.riwayat_id %>" target="_blank" class="btn primary" style="font-size: 12px;">PDF</a>
+                <button onclick="openUploadModal('<%= item.riwayat_id %>')" class="btn" style="background: #28a745; color: white; border: none; font-size: 12px; padding: 5px 10px; cursor: pointer;">Upload</button>
+              </div>
+            </td>
+          </tr>
+        <% }) %>
+      <% } else { %>
+        <tr>
+          <td colspan="8" style="text-align: center; padding: 30px; color: #888;">Data tidak ditemukan untuk tanggal <%= tanggalAktif %></td>
+        </tr>
+      <% } %>
+    </tbody>
+  </table>
+
+  <div id="uploadModal" class="modal" style="display:none;">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h3>Upload Foto Bukti</h3>
+      <span class="close" onclick="closeModal()">&times;</span>
+    </div>
+    <form id="uploadForm" action="" method="POST" enctype="multipart/form-data">
+      <div class="modal-body">
+        <input type="file" name="foto" accept="image/*" required>
+      </div>
+      <div class="modal-footer">
+        <button type="submit" class="btn primary">Simpan</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+  function openUploadModal(riwayatId) {
+    const modal = document.getElementById('uploadModal');
+    const form = document.getElementById('uploadForm');
+    // Set action secara dinamis
+    form.action = `/laporan/upload-bukti/${riwayatId}`;
+    modal.style.display = 'block';
+  }
+
+  function closeModal() {
+    document.getElementById('uploadModal').style.display = 'none';
+  }
+</script>
+</main>

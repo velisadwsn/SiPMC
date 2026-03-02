@@ -13,7 +13,7 @@
         .container-table > tbody > tr > td { padding: 10px; border: none; }
         
         .header-section { margin-bottom: 10px; }
-        .logo-sisi { height: 80px; } .logo-sig { height: 80px; }
+        .logo-kirana { height: 80px; } .logo-sig { height: 80px; }
         .config-outer { border: 1.2px solid black; padding: 12px; margin-bottom: 10px; font-family: 'Courier New', Courier, monospace; }
 
         .data-grid { width: 90%; border-collapse: collapse; text-align: center; margin-left: auto; margin-right: auto; }
@@ -45,6 +45,29 @@
         .footer-table td { vertical-align: top; padding-top: 10px; }
         .text-left { text-align: left; }
         .text-center { text-align: center; }
+         .evidence-section { 
+            border-top: 1.5px solid black; 
+            padding: 15px; 
+            text-align: center; 
+        }
+
+        .evidence-title { 
+            font-weight: bold; 
+            margin-bottom: 10px; 
+            text-align: left; 
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 10px;
+        }
+
+
+        .evidence-img { 
+            width: 100% !important;  /* Paksa selebar kertas */
+            height: auto !important; /* BIARKAN TINGGI MENYESUAIKAN SECARA ALAMI */
+            max-height: 500px;       /* Beri batas maksimal biar nggak makan satu halaman full kalau fotonya panjang banget */
+            object-fit: contain;     /* Pastikan seluruh gambar terlihat utuh */
+            display: block;
+            margin: 0 auto;
+        }
     </style>
 </head>
 <body>
@@ -59,9 +82,9 @@ const dateSimple = new Date().toLocaleDateString('id-ID', { day: '2-digit', mont
     <div class="header-section">
         <table width="100%">
             <tr>
-                <td width="30%"><img src="/images/sisi.png" class="logo-sisi"></td>
+                <td width="30%"><img src="/images/kirana.png" class="logo-kirana"></td>
                 <td align="center">
-                    <h3 style="margin:0; font-size:14px;">PT. Sinergi Informatika Semen Indonesia</h3>
+                    <h3 style="margin:0; font-size:14px;">PT. Kirana Sakti Komputindo</h3>
                     <h3 style="margin:0; font-size:14px;">Digital Service - Ops & Dev Infra</h3>
                 </td>
                 <td width="30%" align="right"><img src="/images/sig.png" class="logo-sig"></td>
@@ -220,6 +243,22 @@ const dateSimple = new Date().toLocaleDateString('id-ID', { day: '2-digit', mont
                         </td>
                     </tr>
                 </table>
+            </td>
+        </tr>
+         <tr style="border-top: 1.5px solid black;">
+            <td class="evidence-section" width="100%">
+                <div style="font-weight: bold; margin-bottom: 5px; font-family: 'Courier New'; font-size: 10px; text-align: left;">
+                    Foto Bukti Pengerjaan / Evidence:
+                </div>
+                <div class="evidence-wrapper">
+                    <% if (data.foto_bukti) { %>
+                        <img src="/uploads/bukti/<%= data.foto_bukti %>" class="evidence-img">
+                    <% } else { %>
+                        <div style="height: 150px; display: flex; align-items: center; justify-content: center; font-style: italic; color: #888;">
+                            (Belum ada foto bukti yang diunggah)
+                        </div>
+                    <% } %>
+                </div>
             </td>
         </tr>
     </table>

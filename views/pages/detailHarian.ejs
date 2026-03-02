@@ -1,0 +1,67 @@
+<main class="main">
+  <div class="page-header">
+    <div class="page-title">Detail Aktivitas Harian</div>
+  </div>
+  
+  <div class="card">
+    <div class="grid">
+      <div><b>Model:</b><span><%= pmc.model %></span></div>
+      <div><b>Employee No:</b><span><%= pmc.employee_no %></span></div>
+      <div><b>Serial Number:</b><span><%= pmc.serial %></span></div>
+      <div><b>Checked Out:</b><span><%= pmc.checked_out %></span></div>
+      <div><b>CoCd:</b><span><%= pmc.cocd %></span></div>
+      <div><b>Hostname SP:</b><span><%= pmc.hostname %></span></div>
+      <div><b>Lokasi:</b><span><%= pmc.lokasi %></span></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Status Pemeriksaan Hari Ini</h3>
+
+    <div class="pmc-row">
+      <span>Jadwal PMC:</span>
+      <span style="font-weight: bold;"><%= pmc.pmc_category || 'Harian' %></span>
+    </div>
+
+    <div class="pmc-row">
+      <span>Status PMC:</span>
+      <span class="badge <%= pmc.status_pmc ? pmc.status_pmc.toLowerCase() : 'pending' %>">
+        <%= pmc.status_pmc %> 
+        <%= pmc.status_pmc === 'Done' ? '✓' : '' %>
+      </span>
+    </div>
+  </div> 
+
+  <div class="actions">
+    <a href="/harian" class="btn">Kembali</a>
+    
+    <button class="btn danger" onclick="openHapusModal()">Hapus</button>
+
+    <div id="hapusModal" class="modal">
+      <div class="modal-content">
+        <h3>Hapus Data Monitoring Harian?</h3>
+        <div class="modal-actions">
+          <button onclick="closeHapusModal()" class="btn-green">Batal</button>
+          <form action="/harian/detail/delete/<%= pmc.id %>" method="POST" style="display:inline;">
+            <button type="submit" class="btn-red">Ya, Hapus</button>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <a href="/harian/detail/edit/<%= pmc.id %>" class="btn primary">Edit Perangkat & PMC</a>
+  </div>
+
+  <script>
+    function openHapusModal() { 
+        document.getElementById('hapusModal').style.display = 'flex'; 
+    }
+    function closeHapusModal() { 
+        document.getElementById('hapusModal').style.display = 'none'; 
+    }
+    // Menutup modal jika user klik di luar area modal
+    window.onclick = function(e) { 
+        if(e.target == document.getElementById('hapusModal')) closeHapusModal(); 
+    }
+  </script>
+</main>

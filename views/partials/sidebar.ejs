@@ -2,7 +2,6 @@
 <aside class="sidebar">
   <a href="/user" class="profile <%= active === 'user' ? 'active' : '' %>">
     <img src="<%= user.avatar || '/images/avatar/default.jpg' %>" class="avatar">
-
     <div>
       <strong><%= user.nama %></strong><br>
       <small><%= user.unit %></small>
@@ -13,35 +12,52 @@
     <li class="<%= active === 'dashboard' ? 'active' : '' %>">
       <a href="/dashboard">Dashboard</a>
     </li>
-    
-    <li class="<%= active === 'laptop' ? 'active' : '' %>">
-      <a href="/laptop">Data Laptop</a>
+
+    <li class="<%= active === 'harian' ? 'active' : '' %>">
+      <a href="/harian">PMC Harian</a>
     </li>
 
-    <li class="<%= active === 'pc' ? 'active' : '' %>">
-      <a href="/pc">Data PC</a>
+    <li class="<%= active === 'bulanan' ? 'active' : '' %>">
+      <a href="/bulanan">PMC Bulanan (Timbangan)</a>
+    </li>
+
+    <li class="has-submenu <%= active === 'tahunan' ? 'open' : '' %>">
+      <input type="checkbox" id="tahunan-toggle" <%= active === 'tahunan' ? 'checked' : '' %>>
+      <label for="tahunan-toggle" class="menu-title">
+        PMC Tahunan (Sewa)
+      </label>
+      <ul class="submenu">
+        <li class="<%= subActive === 'laptop' ? 'active' : '' %>">
+          <a href="/laptop">Data Laptop</a>
+        </li>
+        <li class="<%= subActive === 'pc' ? 'active' : '' %>">
+          <a href="/pc">Data PC</a>
+        </li>
+      </ul>
+    </li>
+
+
+    <li class="has-submenu <%= active === 'laporan' ? 'open' : '' %>">
+      <input type="checkbox" id="laporan-toggle" <%= active === 'laporan' ? 'checked' : '' %>>
+      <label for="laporan-toggle" class="menu-title">
+        Laporan
+      </label>
+      <ul class="submenu">
+        <li class="<%= subActive === 'lap-harian' ? 'active' : '' %>">
+          <a href="/laporan/harian">Laporan Harian</a>
+        </li>
+        <li class="<%= subActive === 'lap-bulanan' ? 'active' : '' %>">
+          <a href="/laporan/bulanan">Laporan Bulanan</a>
+        </li>
+        <li class="<%= subActive === 'lap-tahunan' ? 'active' : '' %>">
+          <a href="/laporan/tahunan">Laporan Tahunan</a>
+        </li>
+      </ul>
     </li>
 
     <li class="<%= active === 'riwayat' ? 'active' : '' %>">
       <a href="/riwayat">Riwayat</a>
     </li>
-
-    <li class="has-submenu <%= active === 'laporan' ? 'open' : '' %>">
-      <input type="checkbox" id="laporan-toggle"
-        <%= active === 'laporan' ? 'checked' : '' %>>
-
-      <label for="laporan-toggle" class="menu-title">
-        Laporan
-      </label>
-
-      <ul class="submenu">
-        <li class="<%= subActive === 'laptop' ? 'active' : '' %>">
-          <a href="/laporan/laptop">Laptop</a>
-        </li>
-        <li class="<%= subActive === 'pc' ? 'active' : '' %>">
-          <a href="/laporan/pc">PC</a>
-        </li>
-      </ul>
-    </li>
+    
   </ul>
 </aside>

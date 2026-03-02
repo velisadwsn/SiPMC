@@ -30,7 +30,7 @@ router.post('/', (req, res) => {
         return res.redirect('/dashboard');
       }
     }
-    res.send("<script>alert('Login Gagal!'); window.location='/';</script>");
+    res.send("<script>alert('Username atau Password Salah!'); window.location='/';</script>");
   });
 });
 

@@ -1,0 +1,95 @@
+<main class="main">
+  <div class="page-header">
+    <div class="page-title">Laporan PMC Bulanan (Timbangan)</div>
+
+    <div class="filter-area">
+      <form action="/laporan/bulanan" method="GET" style="display: flex; gap: 10px; align-items: center;">
+        
+        <select name="tahun" onchange="this.form.submit()">
+          <% 
+            const thnNow = new Date().getFullYear(); 
+            for(let i = thnNow; i >= thnNow - 3; i--) { 
+          %>
+            <option value="<%= i %>" <%= tahunAktif == i ? 'selected' : '' %>><%= i %></option>
+          <% } %>
+        </select>
+
+        <div class="search-box">
+          <input type="text" name="keyword" placeholder="Cari Aset" value="<%= keyword %>">
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <table class="laporan-table">
+    <thead>
+      <tr>
+        <th>No</th>
+        <th>Model Aset</th>
+        <th>Serial Number</th>
+        <th>Lokasi</th>
+        <th>Tahun</th>
+        <th>Teknisi</th>
+        <th>Aksi</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% if (laporan.length > 0) { %>
+        <% laporan.forEach((item, index) => { %>
+          <tr>
+            <td><%= index + 1 %></td>
+            <td><%= item.model %></td>
+            <td><%= item.serial_number %></td>
+            <td><%= item.lokasi %></td>
+            <td><%= item.tahun %></td>
+            <td><%= item.pemeriksa || '-' %></td>
+            <td>
+              <div style="display: flex; gap: 5px;">
+                <a href="/laporan/preview/<%= item.riwayat_id %>" target="_blank" class="btn primary">Cetak</a>
+                <button onclick="openUploadModal('<%= item.riwayat_id %>')" class="btn" style="background: #28a745; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer;">Upload</button>
+              </div>
+            </td>
+          </tr>
+        <% }) %>
+      <% } else { %>
+        <tr>
+          <td colspan="7" style="text-align: center; padding: 30px; color: #888;">
+            Data Bulanan tidak ditemukan untuk tahun <%= tahunAktif %>.
+          </td>
+        </tr>
+      <% } %>
+    </tbody>
+  </table>
+
+  <div id="uploadModal" class="modal" style="display:none;">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h3>Upload Foto Bukti</h3>
+      <span class="close" onclick="closeModal()">&times;</span>
+    </div>
+    <form id="uploadForm" action="" method="POST" enctype="multipart/form-data">
+      <div class="modal-body">
+        <input type="file" name="foto" accept="image/*" required>
+      </div>
+      <div class="modal-footer">
+        <button type="submit" class="btn primary">Simpan</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+  function openUploadModal(riwayatId) {
+    const modal = document.getElementById('uploadModal');
+    const form = document.getElementById('uploadForm');
+    // Set action secara dinamis
+    form.action = `/laporan/upload-bukti/${riwayatId}`;
+    modal.style.display = 'block';
+  }
+
+  function closeModal() {
+    document.getElementById('uploadModal').style.display = 'none';
+  }
+</script>
+
+</main>

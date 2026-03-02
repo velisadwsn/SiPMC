@@ -1,0 +1,122 @@
+<main class="main">
+    <div class="page-header">
+        <div class="page-title">Monitoring Bulanan - <%= periode %></div>
+    </div>
+
+    <div class="top-bar">
+        <a href="/bulanan/tambah" class="btn-tambah">+ Tambah Data</a>
+        
+        <div style="display: flex; align-items: center; gap: 15px;">
+            <form action="/bulanan" method="GET" class="search-form">
+                <input type="text" name="keyword" class="input-search" placeholder="Cari" value="<%= keyword %>">
+            </form>
+
+            <div style="display: flex; gap: 5px;">
+                <button id="btnSetDone" style="background: #4eb554; color: white; border: none; padding: 0 15px; border-radius: 5px; font-weight: bold; cursor: pointer; height: 40px; display: flex; align-items: center; gap: 5px;" title="Tandai semua selesai">
+                    ✅ Done
+                </button>
+
+                <button id="btnSetPending" style="background: #e39a5a; color: white; border: none; padding: 0 15px; border-radius: 5px; font-weight: bold; cursor: pointer; height: 40px; display: flex; align-items: center; gap: 5px;" title="Reset jadi pending">
+                    ⏳ Pending
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <% 
+        const listPending = devices ? devices.filter(item => item.status_terakhir !== 'Done') : [];
+        const listDone = devices ? devices.filter(item => item.status_terakhir === 'Done') : [];
+    %>
+
+    <div class="split-container">
+        <div class="col-split">
+            <div class="col-header pending">
+                <span>⏳ PENDING BULAN INI</span>
+                <span class="count-badge"><%= listPending.length %></span>
+            </div>
+            <% if (listPending.length === 0) { %>
+                <div class="empty-msg">Tidak ada data pending.</div>
+            <% } else { %>
+                <% listPending.forEach(item => { %>
+                    <div class="list-card" data-id="<%= item.device_id %>">
+                        <div class="card-left">
+                            <div class="co-text"><%= item.model %></div>
+                            <div class="sn-text">SN: <%= item.serial_number %></div>
+                            <div class="no-text">No: <%= item.no %></div>
+                        </div>
+                        <a href="/bulanan/detail/<%= item.device_id %>" class="btn-detail">Detail</a>
+                    </div>
+                <% }) %>
+            <% } %>
+        </div>
+
+        <div class="col-split">
+            <div class="col-header done">
+                <span>✅ SELESAI BULAN INI</span>
+                <span class="count-badge"><%= listDone.length %></span>
+            </div>
+            <% if (listDone.length === 0) { %>
+                <div class="empty-msg">Belum ada yang selesai.</div>
+            <% } else { %>
+                <% listDone.forEach(item => { %>
+                    <div class="list-card" data-id="<%= item.device_id %>">
+                        <div class="card-left">
+                            <div class="co-text"><%= item.model %></div>
+                            <div class="sn-text">SN: <%= item.serial_number %></div>
+                            <div class="no-text">No: <%= item.no %></div>
+                        </div>
+                        <a href="/bulanan/detail/<%= item.device_id %>" class="btn-detail">Detail</a>
+                    </div>
+                <% }) %>
+            <% } %>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const btnDone = document.getElementById('btnSetDone');
+            const btnPending = document.getElementById('btnSetPending');
+            
+            async function updateAllStatus(targetStatus) {
+                // Ambil semua card yang tampil (berdasarkan hasil filter/pencarian)
+                const allCards = document.querySelectorAll('.list-card');
+                const deviceIds = Array.from(allCards).map(card => card.getAttribute('data-id'));
+
+                if (deviceIds.length === 0) {
+                    alert("Tidak ada data untuk diupdate.");
+                    return;
+                }
+
+                const actionText = targetStatus === 'Done' ? "SELESAI (Done)" : "PENDING (Reset)";
+                if (!confirm(`Yakin ubah status ${deviceIds.length} perangkat menjadi ${actionText}?`)) {
+                    return;
+                }
+
+                try {
+                    const response = await fetch('/bulanan/bulk-update', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ 
+                            ids: deviceIds, 
+                            status: targetStatus,
+                            bulan: 'Bulanan' // Secara default masuk kategori Bulanan
+                        })
+                    });
+
+                    const result = await response.json();
+                    if (result.success) {
+                        window.location.reload();
+                    } else {
+                        alert("Gagal update data.");
+                    }
+                } catch (e) {
+                    console.error(e);
+                    alert("Terjadi kesalahan sistem.");
+                }
+            }
+
+            btnDone.addEventListener('click', () => updateAllStatus('Done'));
+            btnPending.addEventListener('click', () => updateAllStatus('Pending'));
+        });
+    </script>
+</main>

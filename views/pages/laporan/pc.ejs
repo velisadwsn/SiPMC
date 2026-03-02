@@ -1,6 +1,11 @@
 <main class="main">
   <div class="page-header">
-    <div class="page-title">Laporan PMC PC</div>
+    <div class="page-title">Laporan PMC Sewa (PC)</div>
+
+<div class="tab-group">
+      <a href="/laporan/pc" class="tab-btn active">Daftar PC</a>
+      <a href="/laporan/laptop" class="tab-btn">Daftar Laptop</a>
+    </div>
 
     <div class="filter-area">
       <form action="/laporan/pc" method="GET" style="display: flex; gap: 10px; align-items: center;">
@@ -39,7 +44,9 @@
         <th>Bulan</th>
         <th>Tahun</th>
         <th>Pemeriksa</th>
+        <th>Foto Bukti</th> 
         <th>Aksi</th>
+    
       </tr>
     </thead>
     <tbody>
@@ -52,8 +59,18 @@
             <td><%= item.bulan %></td>
             <td><%= item.tahun %></td>
             <td><%= item.pemeriksa || 'Tidak Ada Nama' %></td>
+             <td>
+              <% if (item.foto_bukti) { %>
+                <span style="color: green;">Ada</span>
+              <% } else { %>
+                <span style="color: orange;">Belum Ada</span>
+              <% } %>
+            </td>
             <td>
-              <a href="/laporan/previewpc/<%= item.device_id %>" target="_blank" class="btn primary" style="text-decoration: none; font-size: 12px;">Cetak PDF</a>
+              <div style="display: flex; gap: 10px;">
+                <a href="/laporan/preview/<%= item.riwayat_id %>" target="_blank" class="btn primary" style="text-decoration: none; font-size: 13px;">PDF</a>
+                <button onclick="openUploadModal('<%= item.riwayat_id %>')" class="btn" style="background: #28a745; color: white; border: none; font-size: 13px; padding: 5px 10px; border-radius: 4px; cursor: pointer;">Upload Bukti</button>
+              </div>
             </td>
           </tr>
         <% }) %>
@@ -66,4 +83,36 @@
       <% } %>
     </tbody>
   </table>
+
+  <div id="uploadModal" class="modal" style="display:none;">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h3>Upload Foto Bukti</h3>
+      <span class="close" onclick="closeModal()">&times;</span>
+    </div>
+    <form id="uploadForm" action="" method="POST" enctype="multipart/form-data">
+      <div class="modal-body">
+        <input type="file" name="foto" accept="image/*" required>
+      </div>
+      <div class="modal-footer">
+        <button type="submit" class="btn primary">Simpan</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+  function openUploadModal(riwayatId) {
+    const modal = document.getElementById('uploadModal');
+    const form = document.getElementById('uploadForm');
+    // Set action secara dinamis
+    form.action = `/laporan/upload-bukti/${riwayatId}`;
+    modal.style.display = 'block';
+  }
+
+  function closeModal() {
+    document.getElementById('uploadModal').style.display = 'none';
+  }
+</script>
+
 </main>

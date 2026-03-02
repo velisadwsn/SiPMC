@@ -16,18 +16,19 @@ router.get("/", (req, res) => {
     ) as status_terakhir
     FROM devices d 
     WHERE d.device_type = 'Laptop'
+    AND d.pmc_category = 'Tahunan'
   `;
   
   let params = [];
 
   if (bulan) { sql += " AND d.jadwal_PMC LIKE ?"; params.push(`%${bulan}%`); }
-  if (keyword) { sql += " AND (d.no LIKE ? OR d.model LIKE ? OR d.serial_number LIKE ?)"; params.push(`%${keyword}%`, `%${keyword}%`, `%${keyword}%`); }
+  if (keyword) { sql += " AND (d.no LIKE ? OR d.model LIKE ? OR d.serial_number LIKE ? OR d.hostname LIKE ? OR d.cocd LIKE ? OR d.employee_no LIKE ? OR d.checked_out LIKE ? OR d.jadwal_PMC LIKE ?)"; params.push(`%${keyword}%`, `%${keyword}%`, `%${keyword}%`, `%${keyword}%`, `%${keyword}%`, `%${keyword}%`, `%${keyword}%`, `%${keyword}%`); }
 
   db.query(sql, params, (err, results) => {
     if (err) return res.status(500).send("DB Error");
     res.render("pages/dataLaptop", {
       title: "Data Laptop", layout: "layouts/main", css: "dataDevice.css",
-      active: "laptop", laptops: results, bulan: bulan || "", keyword: keyword || ""
+      active: 'tahunan', subActive: 'laptop', laptops: results, bulan: bulan || "", keyword: keyword || ""
     });
   });
 });
@@ -221,6 +222,82 @@ router.post('/detail/delete/:id', (req, res) => {
           });
       });
   });
+});
+
+// ==================================================
+// FITUR: BULK UPDATE (FIX: Update Device + History)
+// ==================================================
+router.post('/bulk-update', async (req, res) => {
+    // Tangkap 'bulan' dari frontend
+    const { ids, status, bulan } = req.body; 
+    const tahun = new Date().getFullYear();
+    const userId = req.session.user ? req.session.user.id : 1; 
+
+    if (!ids || ids.length === 0) {
+        return res.json({ success: false, message: "Tidak ada data" });
+    }
+
+    try {
+        for (const id of ids) {
+            await new Promise((resolve, reject) => {
+                
+                // 1. UPDATE TABEL DEVICES DULU (PENTING!)
+                // Supaya jadwal_PMC seragam dan bersih, jadi pasti muncul di laporan
+                const sqlUpdateDevice = "UPDATE devices SET jadwal_PMC = ? WHERE device_id = ?";
+                db.query(sqlUpdateDevice, [bulan, id], (errDev) => {
+                    if (errDev) console.error("Gagal update device di bulk:", errDev); 
+                    // Lanjut saja meski error kecil, biar history tetap jalan
+                    
+                    // 2. Ambil Info untuk Backup
+                    const sqlInfo = "SELECT model, serial_number FROM devices WHERE device_id = ?";
+                    db.query(sqlInfo, [id], (errInfo, resInfo) => {
+                        if (errInfo) return reject(errInfo);
+                        
+                        const infoBackup = resInfo.length > 0 ? `${resInfo[0].model} ${resInfo[0].serial_number}` : 'Unknown Device';
+
+                        // 3. Cek & Update History
+                        const sqlCheck = "SELECT riwayat_id FROM histories WHERE device_id = ? AND tahun = ?";
+                        db.query(sqlCheck, [id, tahun], (errCheck, rows) => {
+                            if (errCheck) return reject(errCheck);
+
+                            if (rows.length > 0) {
+                                // UPDATE HISTORY
+                                const sqlUpdate = `
+                                    UPDATE histories 
+                                    SET status_PMC = ?, 
+                                        tanggal_cek = NOW(), 
+                                        action_type = 'Bulk Update',
+                                        checked_by = ? 
+                                    WHERE device_id = ? AND tahun = ?
+                                `;
+                                db.query(sqlUpdate, [status, userId, id, tahun], (errUp) => {
+                                    if (errUp) reject(errUp);
+                                    else resolve();
+                                });
+                            } else {
+                                // INSERT HISTORY
+                                const sqlInsert = `
+                                    INSERT INTO histories 
+                                    (device_id, tahun, status_PMC, tanggal_cek, action_type, info_backup, checked_by) 
+                                    VALUES (?, ?, ?, NOW(), 'Bulk Update', ?, ?)
+                                `;
+                                db.query(sqlInsert, [id, tahun, status, infoBackup, userId], (errIn) => {
+                                    if (errIn) reject(errIn);
+                                    else resolve();
+                                });
+                            }
+                        });
+                    });
+                });
+            });
+        }
+
+        res.json({ success: true });
+
+    } catch (error) {
+        console.error("Bulk Update Error:", error);
+        res.status(500).json({ success: false });
+    }
 });
 
 module.exports = router;

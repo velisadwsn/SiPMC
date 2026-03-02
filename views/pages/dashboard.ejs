@@ -5,40 +5,80 @@
         </div>
     </div>
 
-    <div class="dashboard-grid">
-      
-      <div class="stat-card dark-blue">
-        <div class="card-top">
-            <h3 class="card-label">TOTAL JADWAL <%= currentMonth.toUpperCase() %></h3>
-            <span class="card-number"><%= stats.total %></span>
-        </div>
-        <div class="card-bottom">
-            <div class="detail-item"><%= stats.totalLaptop %> Laptop</div>
-            <div class="detail-item"><%= stats.totalPC %> PC</div>
-        </div>
-      </div>
+    <div class="section-wrapper">
+        <h2 class="section-title">PMC Tahunan (sewa)</h2>
+        
+        <div class="dashboard-grid">
+            <div class="stat-card dark-blue">
+                <div class="card-top">
+                    <h3 class="card-label">TOTAL JADWAL <%= currentMonth.toUpperCase() %></h3>
+                    <span class="card-number"><%= stats.total %></span>
+                </div>
+                <div class="card-bottom">
+                    <div class="detail-item"><%= stats.totalLaptop %> Laptop</div>
+                    <div class="detail-item"><%= stats.totalPC %> PC</div>
+                </div>
+            </div>
 
-      <div class="stat-card grey">
-        <div class="card-top">
-            <h3 class="card-label">PENDING / PROSES</h3>
-            <span class="card-number"><%= stats.pending %></span>
-        </div>
-        <div class="card-bottom">
-            <div class="detail-item"><%= stats.pendingLaptop %> Laptop</div>
-            <div class="detail-item"><%= stats.pendingPC %> PC</div>
-        </div>
-      </div>
+            <div class="stat-card grey">
+                <div class="card-top">
+                    <h3 class="card-label">PENDING / PROSES</h3>
+                    <span class="card-number"><%= stats.pending %></span>
+                </div>
+                <div class="card-bottom">
+                    <div class="detail-item"><%= stats.pendingLaptop %> Laptop</div>
+                    <div class="detail-item"><%= stats.pendingPC %> PC</div>
+                </div>
+            </div>
 
-      <div class="stat-card soft-green">
-        <div class="card-top">
-            <h3 class="card-label">SELESAI (DONE)</h3>
-            <span class="card-number" style="color: white;"><%= stats.done %></span>
+            <div class="stat-card soft-green">
+                <div class="card-top">
+                    <h3 class="card-label">SELESAI (DONE)</h3>
+                    <span class="card-number" style="color: white;"><%= stats.done %></span>
+                </div>
+                <div class="card-bottom">
+                    <div class="detail-item"><%= stats.doneLaptop %> Laptop</div>
+                    <div class="detail-item"><%= stats.donePC %> PC</div>
+                </div>
+            </div>
         </div>
-        <div class="card-bottom">
-            <div class="detail-item"><%= stats.doneLaptop %> Laptop</div>
-            <div class="detail-item"><%= stats.donePC %> PC</div>
-        </div>
-      </div>
-
     </div>
+
+<div class="dashboard-grid" style="margin-top: 25px;">
+    <div class="stat-card orange">
+        <div class="card-top">
+            <h3 class="card-label">PMC HARIAN (SP)</h3>
+            <span class="card-number"><%= stats.harian.done %>/<%= stats.harian.total %></span>
+        </div>
+        <div class="card-bottom">
+            <div class="detail-item">Target pengerjaan hari ini</div>
+            <div class="progress-bar">
+                <div class="fill" data-percent="<%= stats.harian.persen %>"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="stat-card purple">
+        <div class="card-top">
+            <h3 class="card-label">PMC BULANAN (TIMBANGAN)</h3>
+            <span class="card-number"><%= stats.bulanan.done %>/<%= stats.bulanan.total %></span>
+        </div>
+        <div class="card-bottom">
+            <div class="detail-item">Akumulasi bulan <%= currentMonth %></div>
+            <div class="progress-bar">
+                <div class="fill" data-percent="<%= stats.bulanan.persen %>"></div>
+            </div>
+        </div>
+    </div>
+</div>
 </main>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const progressBars = document.querySelectorAll('.fill');
+        progressBars.forEach(bar => {
+            const percent = bar.getAttribute('data-percent');
+            bar.style.width = percent + '%';
+        });
+    });
+</script>
